@@ -1,0 +1,11 @@
+# If custom sounds should be enabled. This is used for songs which use note block sounds outside
+# The vanilla range. This uses a custom pack to add extended sound ranges to those audios.
+# THIS NEEDS TO BE ADDED TO YOUR SERVER RESOURCE PACK.
+enable-custom-sounds: true
+
+# Downloads the resource pack from github for players who join the server.
+# This should be disabled if you have added it to your main resource pack.
+use-default-pack-download: true
+
+# If the above default pack should be required. Ignored if use default pack is disabled.
+require-resource-pack: true

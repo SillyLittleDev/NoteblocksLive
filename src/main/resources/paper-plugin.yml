@@ -1,0 +1,67 @@
+name: MCMidi
+version: '${version}'
+
+main: com.dev.mcmidi.MCMidi
+api-version: '26.2'
+load: POSTWORLD
+folia-supported: true
+
+permissions:
+  songs.command:
+    description: Allows players to use the song command at all.
+    default: op
+
+  songs.play.individual:
+    description: Allows players to play music for themself.
+    default: false
+
+  songs.control.individual:
+    description: Allows players to use controls for themselves (skip, stop, queue, etc).
+    default: false
+
+  songs.play.all:
+    description: Allows players to use all song players.
+    default: op
+
+  songs.control.all:
+    description: Allows players to control all song players.
+    default: op
+
+  songs.reload:
+    description: Allows players to reload the song plugin.
+    default: op
+
+  songs.utility:
+    description: Allows users to use utility tools like song conversion and rename.
+    default: op
+
+  songs.system:
+    description: Allows users to change system settings like song settings. Not recommended.
+    default: op
+
+dependencies:
+  server:
+    ProtocolLib:
+      load: BEFORE
+      required: false
+      join-classpath: true
+    ProtocolSupport:
+      load: BEFORE
+      required: false
+      join-classpath: true
+    ViaVersion:
+      load: BEFORE
+      required: false
+      join-classpath: true
+    ViaBackwards:
+      load: BEFORE
+      required: false
+      join-classpath: true
+    ViaRewind:
+      load: BEFORE
+      required: false
+      join-classpath: true
+    Geyser-Spigot:
+      load: BEFORE
+      required: false
+      join-classpath: true
