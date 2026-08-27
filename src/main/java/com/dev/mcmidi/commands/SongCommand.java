@@ -417,7 +417,7 @@ public class SongCommand {
                                 .then(Commands.argument("song-player", StringArgumentType.string())
                                         .suggests((context, builder) -> suggestSongPlayer(builder, context.getSource()))
                                         .then(Commands.argument("times", StringArgumentType.string())
-                                                .suggests((context, builder) -> suggestLoop(builder))
+                                                .suggests((_, builder) -> suggestLoop(builder))
                                                 .executes(context -> {
                                                     String times = StringArgumentType.getString(context, "times");
                                                     int loops;
@@ -766,6 +766,42 @@ public class SongCommand {
                                             );
 
                                             renameListener.registerRename(player.getUniqueId(), song);
+
+                                            return Command.SINGLE_SUCCESS;
+                                        })
+                                )
+                        )
+                        .then(Commands.literal("info")
+                                .then(Commands.argument("song", StringArgumentType.greedyString())
+                                        .suggests((_, builder) -> suggestSongs(builder))
+                                        .executes(context -> {
+                                            String song = StringArgumentType.getString(context, "song");
+                                            ArrayList<PreciseNotes.PacketPreciseNote> notes = songManager.getSongNotes(song);
+                                            if (notes == null) {
+                                                context.getSource().getSender().sendMessage(Component.text("Song not found.", NamedTextColor.RED));
+                                                return Command.SINGLE_SUCCESS;
+                                            }
+
+                                            long durationNs = notes.stream()
+                                                    .mapToLong(PreciseNotes.PacketPreciseNote::postPause)
+                                                    .sum();
+
+                                            int mins = (int) (durationNs / 60000000000L);
+                                            int remainingSecs = (int) ((durationNs / 1000000000L) % 60);
+
+                                            context.getSource().getSender().sendMessage(
+                                                    Component.text("Song info: " + song, NamedTextColor.WHITE)
+                                            );
+
+                                            context.getSource().getSender().sendMessage(
+                                                    Component.text("Notes: ", NamedTextColor.WHITE)
+                                                            .append(Component.text(notes.size(), NamedTextColor.AQUA))
+                                            );
+
+                                            context.getSource().getSender().sendMessage(
+                                                    Component.text("Duration: ", NamedTextColor.WHITE)
+                                                            .append(Component.text(mins + ":" + String.format("%02d", remainingSecs), NamedTextColor.AQUA))
+                                            );
 
                                             return Command.SINGLE_SUCCESS;
                                         })

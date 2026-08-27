@@ -9,12 +9,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class RenameListener implements Listener {
     private record Rename(long time, String oldName) {}
-    private HashMap<UUID, Rename> renameMap = new HashMap<>();
+    private final ConcurrentHashMap<UUID, Rename> renameMap = new ConcurrentHashMap<>();
 
     private final SongManager songManager;
 
