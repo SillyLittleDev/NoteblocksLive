@@ -26,16 +26,17 @@ public class SongManager {
     }
 
     public void rename(String oldName, String newName) throws IOException {
+        File file = getFile(oldName, new File(MCMidi.getInstance().getDataFolder(), "songs"));
+        if (file == null || !file.exists()) throw new FileNotFoundException("Song file could not be found.");
+
         ArrayList<PreciseNotes.PacketPreciseNote> musicSheet = getMusicSheet(oldName);
+        if (musicSheet == null) throw new NullPointerException("Music sheet could not be found.");
+
+        renameFile(file, newName);
+
         musicSheets.remove(oldName);
 
         musicSheets.put(newName, musicSheet);
-
-        File file = getFile(oldName, new File(MCMidi.getInstance().getDataFolder(), "songs"));
-
-        if (file == null || !file.exists()) throw new FileNotFoundException();
-
-        renameFile(file, newName);
     }
 
     private void renameFile(File sourceFile, String newName) throws IOException {

@@ -8,7 +8,7 @@ This plugin allows for the playing of Midi, Noteblock Studio, and custom-made so
 #### This plugin is in early development!! There are still many features planned, and there may be some bugs. I have done a lot of testing, but am only one person. Please report any bugs, and feel free to request features.
 
 ### Requirements
-#### ⚠️ FOR BEST FUNCTIONALITY, A RESOURCE PACK IS REQUIRED. BY DEFAULT THIS WILL BE PUT IN THE PLUGINS FOLDER. MANY SONGS WONT SOUND RIGHT WITHOUT IT.
+#### ⚠️ FOR BEST FUNCTIONALITY, A RESOURCE PACK IS REQUIRED. BY DEFAULT THIS WILL BE PUT IN THE PLUGINS FOLDER, AND LOADED FOR PLAYERS FROM GITHUB. MANY SONGS WONT SOUND RIGHT WITHOUT IT.
 
 ### ✅ Features and utility
  - Play custom songs live in game
@@ -22,7 +22,8 @@ This plugin allows for the playing of Midi, Noteblock Studio, and custom-made so
 
 
 ### 📬 Reporting issues
-To report bugs, ask for features, or seek help in other ways, feel free to join the discord. <DONT FORGET TO MAKE A DISCORD BEFORE PUBLISHING YOU LAZY BUM>
+To report bugs, ask for features, or seek help in other ways, feel free to join the [discord](https://discord.com/UPDATETHISLINK), or create an issue on the [github](https://github.com/SillyLittleDev/MCMidi). <DONT FORGET TO MAKE A DISCORD BEFORE PUBLISHING YOU LAZY BUM><br>
+Also, development of this plugin has been spread out over long periods of time. As such, some explanations may have mistakes, or be less than would be hoped for. Please reach out with any issues or gaps in any of the docs made for this plugin.
 
 ### 📁 Currently supported file formats
  - Midi
@@ -52,6 +53,16 @@ Example - An A note on the harp at half volume: harp;0;a;f;0;0.5
 This is the standard usage for the default minecraft instruments. Additional sounds are available by using the full sound key:<br>
 Example - The default fire rocket blast sound (default sound is f sharp): minecraft:entity.firework_rocket.blast;0;f;s;0<br>
 
+Using sound keys for minecraft, or other sounds in a resource pack cannot use the prefix "custom:", as that prefix is reserved for registered custom instruments.
+
+#### Custom Instruments
+Custom instruments are supported. Custom sounds can be used, as shown above, but custom instrument implementation can also be used.<br>
+The custom instrument tools are only meant for very specific usage, and has undergone far less testing than everything else. It is suggested to just use the above full sound name setup in songs.
+
+##### WARNING: THE CUSTOM INSTRUMENT SYSTEM WAS MADE AS A TEST. IT IS UNDER TESTED, LIKELY PRONE TO ISSUES, AND MAY HAVE ISSUES. PLEASE EXPECT ISSUES. PLEASE REACH OUT WITH ANY BUGS.
+
+Custom instruments allow for more advanced musical instruments in the game. While it adds the normal functionality of sounds with an extended range, it also supports things like held notes, allowing for sounds with dynamic lengths.<br>
+Learn more about how the custom instrument implementation works in [INSTRUMENTS.md](INSTRUMENTS.md)
 
 ### ☐ Planned features
  - Add music fading / transitions
