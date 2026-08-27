@@ -1,12 +1,12 @@
-package com.dev.mcmidi.song.songPlayers;
+package com.dev.nbl.song.songPlayers;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.manager.player.PlayerManager;
 import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.protocol.sound.SoundCategory;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntitySoundEffect;
-import com.dev.mcmidi.MCMidi;
-import com.dev.mcmidi.util.PreciseNotes;
+import com.dev.nbl.NoteblocksLive;
+import com.dev.nbl.util.PreciseNotes;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 public class IndividualSongPlayer extends AbstractSongPlayer {
-    private final Plugin plugin = MCMidi.getInstance();
+    private final Plugin plugin = NoteblocksLive.getInstance();
     private final int playerID;
     private final User packetUser;
 

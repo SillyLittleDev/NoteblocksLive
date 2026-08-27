@@ -1,4 +1,4 @@
-package com.dev.mcmidi.song.songPlayers;
+package com.dev.nbl.song.songPlayers;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.manager.player.PlayerManager;
@@ -6,8 +6,8 @@ import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.protocol.sound.Sound;
 import com.github.retrooper.packetevents.protocol.sound.SoundCategory;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntitySoundEffect;
-import com.dev.mcmidi.MCMidi;
-import com.dev.mcmidi.util.PreciseNotes;
+import com.dev.nbl.NoteblocksLive;
+import com.dev.nbl.util.PreciseNotes;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -16,7 +16,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AudienceSongPlayer extends AbstractSongPlayer {
-    private final Plugin plugin = MCMidi.getInstance();
+    private final Plugin plugin = NoteblocksLive.getInstance();
     private final PlayerManager packetEvents = PacketEvents.getAPI().getPlayerManager();
     private final ConcurrentHashMap<UUID, PacketAudienceMember> audience = new ConcurrentHashMap<>();
     private final String name;
@@ -26,7 +26,7 @@ public class AudienceSongPlayer extends AbstractSongPlayer {
 
         this.name = name;
 
-        MCMidi.getInstance().addSongPlayer(this, name);
+        NoteblocksLive.getInstance().addSongPlayer(this, name);
     }
 
     public void addPlayer(Player player) {
@@ -39,7 +39,7 @@ public class AudienceSongPlayer extends AbstractSongPlayer {
 
     public void stopSong() {
         stopPlaybackOnly();
-        MCMidi.getInstance().removeSongPlayer(name);
+        NoteblocksLive.getInstance().removeSongPlayer(name);
     }
 
     public void startSong(ArrayList<PreciseNotes.PacketPreciseNote> song, String songName) {

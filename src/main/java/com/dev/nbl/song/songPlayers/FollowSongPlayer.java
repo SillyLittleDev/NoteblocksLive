@@ -1,12 +1,12 @@
-package com.dev.mcmidi.song.songPlayers;
+package com.dev.nbl.song.songPlayers;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.manager.player.PlayerManager;
 import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.protocol.sound.SoundCategory;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntitySoundEffect;
-import com.dev.mcmidi.MCMidi;
-import com.dev.mcmidi.util.PreciseNotes;
+import com.dev.nbl.NoteblocksLive;
+import com.dev.nbl.util.PreciseNotes;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class FollowSongPlayer extends AbstractSongPlayer {
-    private final Plugin plugin = MCMidi.getInstance();
+    private final Plugin plugin = NoteblocksLive.getInstance();
     private final PlayerManager manager = PacketEvents.getAPI().getPlayerManager();
 
     private final LivingEntity toFollow;
@@ -34,7 +34,7 @@ public class FollowSongPlayer extends AbstractSongPlayer {
         this.name = name;
         sourceEntityId = entity.getEntityId();
 
-        MCMidi.getInstance().addSongPlayer(this, name);
+        NoteblocksLive.getInstance().addSongPlayer(this, name);
     }
 
     public void addPlayer(Player player) {
@@ -50,7 +50,7 @@ public class FollowSongPlayer extends AbstractSongPlayer {
     public void stopSong() {
         stopNoRemove();
 
-        MCMidi.getInstance().removeSongPlayer(name);
+        NoteblocksLive.getInstance().removeSongPlayer(name);
     }
 
     private void stopNoRemove() {

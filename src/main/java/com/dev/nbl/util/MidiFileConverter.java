@@ -1,4 +1,4 @@
-package com.dev.mcmidi.util;
+package com.dev.nbl.util;
 
 import javax.sound.midi.*;
 import java.io.File;

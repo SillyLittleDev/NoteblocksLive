@@ -1,8 +1,8 @@
-package com.dev.mcmidi.song.songPlayers;
+package com.dev.nbl.song.songPlayers;
 
 import com.google.common.collect.Queues;
-import com.dev.mcmidi.MCMidi;
-import com.dev.mcmidi.util.PreciseNotes;
+import com.dev.nbl.NoteblocksLive;
+import com.dev.nbl.util.PreciseNotes;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -44,7 +44,7 @@ public abstract class AbstractSongPlayer {
 
     // todo: make more of the code generalized.
     public void startSong(String name) {
-        startSong(MCMidi.getSongManager().getMusicSheet(name), name);
+        startSong(NoteblocksLive.getSongManager().getMusicSheet(name), name);
     }
 
     protected synchronized void stopPlaybackOnly() {
@@ -97,7 +97,7 @@ public abstract class AbstractSongPlayer {
             long refillTargetNs = nextGroupTargetNs - PRE_QUEUE_NOTE_TIME;
             long delayNs = Math.max(MIN_REFILL_DELAY_NS, refillTargetNs - System.nanoTime());
 
-            Plugin plugin = MCMidi.getInstance();
+            Plugin plugin = NoteblocksLive.getInstance();
 
             songTask = Bukkit.getAsyncScheduler().runDelayed(
                     plugin,
@@ -112,7 +112,7 @@ public abstract class AbstractSongPlayer {
 
     private void queueGroup(long generation, TimedNoteGroup group, long targetNs) {
         long delayNs = Math.max(0L, targetNs - System.nanoTime());
-        Plugin plugin = MCMidi.getInstance();
+        Plugin plugin = NoteblocksLive.getInstance();
 
         if (delayNs <= 0L) {
             Bukkit.getAsyncScheduler().runNow(

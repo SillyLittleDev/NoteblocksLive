@@ -1,17 +1,17 @@
-package com.dev.mcmidi;
+package com.dev.nbl;
 
-import com.dev.mcmidi.listeners.RenameListener;
-import com.dev.mcmidi.song.songPlayers.*;
+import com.dev.nbl.listeners.RenameListener;
+import com.dev.nbl.song.songPlayers.*;
 import com.github.retrooper.packetevents.PacketEvents;
-import com.dev.mcmidi.commands.SongCommand;
-import com.dev.mcmidi.listeners.EveryPlayerListener;
-import com.dev.mcmidi.listeners.PlayerLeaveJoinListener;
-import com.dev.mcmidi.listeners.ResourcePackListener;
-import com.dev.mcmidi.song.SongManager;
-import com.dev.mcmidi.util.CustomInstrumentRegistry;
-import com.dev.mcmidi.util.MidiFileConverter;
-import com.dev.mcmidi.util.PreciseNotes;
-import com.dev.mcmidi.util.SoundKeyResolver;
+import com.dev.nbl.commands.SongCommand;
+import com.dev.nbl.listeners.EveryPlayerListener;
+import com.dev.nbl.listeners.PlayerLeaveJoinListener;
+import com.dev.nbl.listeners.ResourcePackListener;
+import com.dev.nbl.song.SongManager;
+import com.dev.nbl.util.CustomInstrumentRegistry;
+import com.dev.nbl.util.MidiFileConverter;
+import com.dev.nbl.util.PreciseNotes;
+import com.dev.nbl.util.SoundKeyResolver;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
@@ -27,9 +27,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 
-public final class MCMidi extends JavaPlugin {
+public final class NoteblocksLive extends JavaPlugin {
     private static SongManager songManager;
-    private static MCMidi musicManager;
+    private static NoteblocksLive musicManager;
 
     private final HashMap<Player, IndividualSongPlayer> songPlayers = new HashMap<>();
     private final HashMap<String, AbstractSongPlayer> otherPlayers = new HashMap<>(); // For location and follow players
@@ -204,7 +204,7 @@ public final class MCMidi extends JavaPlugin {
         return songManager;
     }
 
-    public static MCMidi getInstance() {
+    public static NoteblocksLive getInstance() {
         return musicManager;
     }
 }

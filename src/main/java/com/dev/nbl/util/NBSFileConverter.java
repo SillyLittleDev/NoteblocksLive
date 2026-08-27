@@ -1,9 +1,9 @@
-package com.dev.mcmidi.util;
+package com.dev.nbl.util;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.sound.Sound;
 import com.github.retrooper.packetevents.protocol.sound.Sounds;
-import com.dev.mcmidi.MCMidi;
+import com.dev.nbl.NoteblocksLive;
 
 import java.io.File;
 import java.io.IOException;
@@ -409,7 +409,7 @@ public final class NBSFileConverter {
             throw new IllegalArgumentException("Could not confidently map NBS custom instrument '" + instrumentName +
                     "' with sound file '" + soundFile + "' to a Minecraft sound.");
 
-        MCMidi.getInstance().getLogger().warning("Bound custom NBS sound: " + instrumentName + " to minecraft sound: " + best.registeredName);
+        NoteblocksLive.getInstance().getLogger().warning("Bound custom NBS sound: " + instrumentName + " to minecraft sound: " + best.registeredName);
 
         return best.sound();
     }

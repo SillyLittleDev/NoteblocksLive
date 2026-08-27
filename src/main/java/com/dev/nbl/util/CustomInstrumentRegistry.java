@@ -1,6 +1,6 @@
-package com.dev.mcmidi.util;
+package com.dev.nbl.util;
 
-import com.dev.mcmidi.MCMidi;
+import com.dev.nbl.NoteblocksLive;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
@@ -78,15 +78,15 @@ public final class CustomInstrumentRegistry {
         String[] split = token.split(":");
 
         if (split.length != 3 || !split[0].equals("custom")) {
-            MCMidi.getInstance().getLogger().warning("Invalid custom instrument token: " + token);
-            MCMidi.getInstance().getLogger().warning("Will use a default sound.");
+            NoteblocksLive.getInstance().getLogger().warning("Invalid custom instrument token: " + token);
+            NoteblocksLive.getInstance().getLogger().warning("Will use a default sound.");
             return null;
         }
 
         CustomInstrumentSoundSet set = byId.get(split[1]);
 
         if (set == null) {
-            MCMidi.getInstance().getLogger().warning("Could not find custom instrument sound set for " + split[1]);
+            NoteblocksLive.getInstance().getLogger().warning("Could not find custom instrument sound set for " + split[1]);
             return null;
         }
 

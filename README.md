@@ -1,4 +1,4 @@
-# MC Midi
+# Noteblocks Live
 ![Available for paper](https://raw.githubusercontent.com/intergrav/devins-badges/v3/assets/cozy/supported/paper_vector.svg)
 
 This plugin allows for the playing of Midi, Noteblock Studio, and custom-made songs live using noteblock sounds. While it is fun to use for playing custom music, it is most useful as a tool for other projects to play music.
@@ -29,7 +29,7 @@ Also, development of this plugin has been spread out over long periods of time. 
  - Midi
  - NBS - NBS songs marked as noteblock compatible will work with the resource pack disabled. Otherwise, the resource pack will be needed to function.
  - YML - Uses the custom music format below. Each entry will be read as a string, with the location being the name of the song.
- - TXT - Also uses the custom music format below. Expects a single string in the file. Song title will be the file name. Also works with the file extension .mcmidi
+ - TXT - Also uses the custom music format below. Expects a single string in the file. Song title will be the file name. Also works with the file extension .nbl
 
 ### 📝 Custom format
 The custom format used for writing music is a simple text format. Different parts of each note are separated by semicolons, and notes are separated by spaces.<br>

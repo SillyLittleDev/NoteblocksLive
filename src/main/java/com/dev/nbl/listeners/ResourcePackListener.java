@@ -1,6 +1,6 @@
-package com.dev.mcmidi.listeners;
+package com.dev.nbl.listeners;
 
-import com.dev.mcmidi.MCMidi;
+import com.dev.nbl.NoteblocksLive;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.resource.ResourcePackInfo;
 import net.kyori.adventure.resource.ResourcePackRequest;
@@ -15,10 +15,10 @@ import java.util.UUID;
 
 public class ResourcePackListener implements Listener {
     private static final UUID uuid = UUID.randomUUID();
-    private final MCMidi plugin;
+    private final NoteblocksLive plugin;
     ResourcePackRequest pack;
 
-    public ResourcePackListener(MCMidi plugin) {
+    public ResourcePackListener(NoteblocksLive plugin) {
         this.plugin = plugin;
 
         reloadPackRequest();

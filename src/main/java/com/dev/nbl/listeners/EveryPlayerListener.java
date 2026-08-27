@@ -1,18 +1,18 @@
-package com.dev.mcmidi.listeners;
+package com.dev.nbl.listeners;
 
-import com.dev.mcmidi.MCMidi;
-import com.dev.mcmidi.song.songPlayers.AbstractSongPlayer;
-import com.dev.mcmidi.song.songPlayers.AudienceSongPlayer;
+import com.dev.nbl.NoteblocksLive;
+import com.dev.nbl.song.songPlayers.AbstractSongPlayer;
+import com.dev.nbl.song.songPlayers.AudienceSongPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 public class EveryPlayerListener implements Listener {
-    private final MCMidi musicManager;
+    private final NoteblocksLive musicManager;
 
     // Improve implementation of All Listener
-    public EveryPlayerListener(MCMidi musicManager) {
+    public EveryPlayerListener(NoteblocksLive musicManager) {
         this.musicManager = musicManager;
     }
 

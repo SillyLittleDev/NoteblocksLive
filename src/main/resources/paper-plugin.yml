@@ -1,7 +1,7 @@
-name: MCMidi
+name: NoteblocksLive
 version: '${version}'
 
-main: com.dev.mcmidi.MCMidi
+main: com.dev.nbl.NoteblocksLive
 api-version: '26.2'
 load: POSTWORLD
 folia-supported: true

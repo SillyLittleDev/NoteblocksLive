@@ -1,4 +1,4 @@
-package com.dev.mcmidi.util;
+package com.dev.nbl.util;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;

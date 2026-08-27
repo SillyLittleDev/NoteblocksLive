@@ -1,6 +1,6 @@
-package com.dev.mcmidi.listeners;
+package com.dev.nbl.listeners;
 
-import com.dev.mcmidi.song.SongManager;
+import com.dev.nbl.song.SongManager;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;

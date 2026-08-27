@@ -1,9 +1,9 @@
-package com.dev.mcmidi.song;
+package com.dev.nbl.song;
 
-import com.dev.mcmidi.MCMidi;
-import com.dev.mcmidi.util.MidiFileConverter;
-import com.dev.mcmidi.util.NBSFileConverter;
-import com.dev.mcmidi.util.PreciseNotes;
+import com.dev.nbl.NoteblocksLive;
+import com.dev.nbl.util.MidiFileConverter;
+import com.dev.nbl.util.NBSFileConverter;
+import com.dev.nbl.util.PreciseNotes;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -26,7 +26,7 @@ public class SongManager {
     }
 
     public void rename(String oldName, String newName) throws IOException {
-        File file = getFile(oldName, new File(MCMidi.getInstance().getDataFolder(), "songs"));
+        File file = getFile(oldName, new File(NoteblocksLive.getInstance().getDataFolder(), "songs"));
         if (file == null || !file.exists()) throw new FileNotFoundException("Song file could not be found.");
 
         ArrayList<PreciseNotes.PacketPreciseNote> musicSheet = getMusicSheet(oldName);
@@ -82,7 +82,7 @@ public class SongManager {
         musicSheets.clear();
 
 
-        File file = new File(MCMidi.getInstance().getDataFolder(), "songs");
+        File file = new File(NoteblocksLive.getInstance().getDataFolder(), "songs");
         if (!file.exists()) file.mkdir();
 
         loadFolder(file);
@@ -109,11 +109,11 @@ public class SongManager {
                 if (name.endsWith(".yml") || name.endsWith(".yaml")) parseYML(f);
                 else if (name.endsWith(".mid") || name.endsWith(".midi")) convertMidi(f);
                 else if (name.endsWith(".nbs")) convertNBS(f);
-                else if (name.endsWith(".mcmidi") || name.endsWith(".txt")) convertMCMidi(f);
-                else MCMidi.getInstance().getLogger().severe("File not in YML or MIDI format: " + name);
+                else if (name.endsWith(".nbl") || name.endsWith(".txt")) convertMCMidi(f);
+                else NoteblocksLive.getInstance().getLogger().severe("File not in YML or MIDI format: " + name);
             } catch (Exception e) {
-                MCMidi.getInstance().getLogger().severe("Failed to load song: " + name);
-                MCMidi.getInstance().getLogger().severe(e.getMessage());
+                NoteblocksLive.getInstance().getLogger().severe("Failed to load song: " + name);
+                NoteblocksLive.getInstance().getLogger().severe(e.getMessage());
                 e.printStackTrace(System.err);
             }
         }
@@ -129,7 +129,7 @@ public class SongManager {
             try {
                 musicSheets.put(name, convertString(data));
             } catch (Exception e) {
-                MCMidi.getInstance().getLogger().severe("Failed to load song: " + name + " - " + e.getMessage());
+                NoteblocksLive.getInstance().getLogger().severe("Failed to load song: " + name + " - " + e.getMessage());
             }
         }
     }
@@ -139,11 +139,11 @@ public class SongManager {
         try {
             musicSheets.put(
                     name,
-                    (MCMidi.getInstance().enableCustomSounds) ? NBSFileConverter.convertExtended(file): NBSFileConverter.convert(file)
+                    (NoteblocksLive.getInstance().enableCustomSounds) ? NBSFileConverter.convertExtended(file): NBSFileConverter.convert(file)
             );
         } catch (Exception e) {
-            MCMidi.getInstance().getLogger().severe("Failed to load song: " + name + " - " + e.getMessage());
-            MCMidi.getInstance().getLogger().log(Level.SEVERE, "Failed to load NBS song: ", e);
+            NoteblocksLive.getInstance().getLogger().severe("Failed to load song: " + name + " - " + e.getMessage());
+            NoteblocksLive.getInstance().getLogger().log(Level.SEVERE, "Failed to load NBS song: ", e);
         }
     }
 
@@ -154,8 +154,8 @@ public class SongManager {
             String converted = MidiFileConverter.convertToSong(file);
             musicSheets.put(name, convertString(converted));
         } catch (Exception e) {
-            MCMidi.getInstance().getLogger().severe("Failed to convert MIDI file for song: " + name);
-            MCMidi.getInstance().getLogger().severe(e.getMessage());
+            NoteblocksLive.getInstance().getLogger().severe("Failed to convert MIDI file for song: " + name);
+            NoteblocksLive.getInstance().getLogger().severe(e.getMessage());
             e.printStackTrace(System.err);
         }
     }
@@ -167,8 +167,8 @@ public class SongManager {
             String song = Files.readString(f.toPath());
             musicSheets.put(name, convertString(song));
         } catch (IOException e) {
-            MCMidi.getInstance().getLogger().severe("Failed to read mcmidi song: " + name);
-            MCMidi.getInstance().getLogger().severe(e.getMessage());
+            NoteblocksLive.getInstance().getLogger().severe("Failed to read mcmidi song: " + name);
+            NoteblocksLive.getInstance().getLogger().severe(e.getMessage());
             e.printStackTrace(System.err);
         }
     }

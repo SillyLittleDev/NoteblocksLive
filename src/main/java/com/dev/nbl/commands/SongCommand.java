@@ -1,19 +1,19 @@
-package com.dev.mcmidi.commands;
+package com.dev.nbl.commands;
 
-import com.dev.mcmidi.listeners.RenameListener;
-import com.dev.mcmidi.song.songPlayers.*;
+import com.dev.nbl.listeners.RenameListener;
+import com.dev.nbl.song.songPlayers.*;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import com.dev.mcmidi.MCMidi;
-import com.dev.mcmidi.listeners.PlayerLeaveJoinListener;
-import com.dev.mcmidi.song.SongManager;
-import com.dev.mcmidi.util.MidiFileConverter;
-import com.dev.mcmidi.util.NBSFileConverter;
-import com.dev.mcmidi.util.PreciseNotes;
-import com.dev.mcmidi.util.SoundKeyResolver;
+import com.dev.nbl.NoteblocksLive;
+import com.dev.nbl.listeners.PlayerLeaveJoinListener;
+import com.dev.nbl.song.SongManager;
+import com.dev.nbl.util.MidiFileConverter;
+import com.dev.nbl.util.NBSFileConverter;
+import com.dev.nbl.util.PreciseNotes;
+import com.dev.nbl.util.SoundKeyResolver;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
@@ -32,11 +32,11 @@ import java.util.concurrent.CompletableFuture;
 
 public class SongCommand {
     private final SongManager songManager;
-    private final MCMidi musicManager;
+    private final NoteblocksLive musicManager;
     private final PlayerLeaveJoinListener playerLeaveJoinListener;
     private final RenameListener renameListener;
 
-    public SongCommand(SongManager songManager, MCMidi musicManager, PlayerLeaveJoinListener playerLeaveJoinListener, RenameListener renameListener) {
+    public SongCommand(SongManager songManager, NoteblocksLive musicManager, PlayerLeaveJoinListener playerLeaveJoinListener, RenameListener renameListener) {
         this.songManager = songManager;
         this.musicManager = musicManager;
         this.playerLeaveJoinListener = playerLeaveJoinListener;
@@ -697,7 +697,7 @@ public class SongCommand {
                                         .executes(context -> {
                                             String song = StringArgumentType.getString(context, "song");
 
-                                            File file = new File(MCMidi.getInstance().getDataFolder(), "songs");
+                                            File file = new File(NoteblocksLive.getInstance().getDataFolder(), "songs");
                                             if (!file.exists()) {
                                                 context.getSource().getSender().sendMessage(Component.text("Songs folder not found!", NamedTextColor.RED));
                                                 return Command.SINGLE_SUCCESS;
@@ -716,10 +716,10 @@ public class SongCommand {
                                                 if (name.endsWith(".yml") || name.endsWith(".yaml") || name.endsWith(".txt")) context.getSource().getSender().sendMessage(Component.text("YML files are already saved as strings."));
                                                 else if (name.endsWith(".mid") || name.endsWith(".midi")) output = MidiFileConverter.convertToSong(songFile);
                                                 else if (name.endsWith(".nbs")) output = NBSFileConverter.convertToString(songFile);
-                                                else MCMidi.getInstance().getLogger().severe("File not in YML or MIDI format: " + name);
+                                                else NoteblocksLive.getInstance().getLogger().severe("File not in YML or MIDI format: " + name);
                                             } catch (Exception e) {
-                                                MCMidi.getInstance().getLogger().severe("Failed to parse song: " + name);
-                                                MCMidi.getInstance().getLogger().severe(e.getMessage());
+                                                NoteblocksLive.getInstance().getLogger().severe("Failed to parse song: " + name);
+                                                NoteblocksLive.getInstance().getLogger().severe(e.getMessage());
                                                 e.printStackTrace(System.err);
 
                                                 context.getSource().getSender().sendMessage(Component.text("Failed to parse song: " + name, NamedTextColor.RED));
@@ -736,7 +736,7 @@ public class SongCommand {
                                                 else {
                                                     context.getSource().getSender().sendMessage(Component.text("Failed to copy song: " + song, NamedTextColor.RED));
                                                     context.getSource().getSender().sendMessage(Component.text("This often happens when a song is too long to copy. Check console to copy the song.", NamedTextColor.RED));
-                                                    MCMidi.getInstance().getLogger().info("Here is the song: " + output);
+                                                    NoteblocksLive.getInstance().getLogger().info("Here is the song: " + output);
                                                 }
                                             }
 

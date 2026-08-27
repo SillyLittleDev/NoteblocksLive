@@ -1,7 +1,7 @@
-package com.dev.mcmidi.util;
+package com.dev.nbl.util;
 
 import com.github.retrooper.packetevents.protocol.sound.Sounds;
-import com.dev.mcmidi.MCMidi;
+import com.dev.nbl.NoteblocksLive;
 
 import java.util.ArrayList;
 
@@ -26,8 +26,8 @@ public class PreciseNotes {
 
             notes.add(
                     new PreciseNoteData(
-                            (MCMidi.getInstance().enableCustomSounds) ? SoundKeyResolver.getSoundKey(sound, octave, tone, sharp) : sound,
-                            (MCMidi.getInstance().enableCustomSounds) ? SoundKeyResolver.calculateNewOctave(octave, tone, sharp) : octave,
+                            (NoteblocksLive.getInstance().enableCustomSounds) ? SoundKeyResolver.getSoundKey(sound, octave, tone, sharp) : sound,
+                            (NoteblocksLive.getInstance().enableCustomSounds) ? SoundKeyResolver.calculateNewOctave(octave, tone, sharp) : octave,
                             tone,
                             sharp,
                             postPause,

@@ -1,4 +1,4 @@
-package com.dev.mcmidi.util;
+package com.dev.nbl.util;
 
 import java.util.Locale;
 import java.util.Map;

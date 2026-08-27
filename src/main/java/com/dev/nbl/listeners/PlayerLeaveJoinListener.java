@@ -1,16 +1,16 @@
-package com.dev.mcmidi.listeners;
+package com.dev.nbl.listeners;
 
-import com.dev.mcmidi.MCMidi;
+import com.dev.nbl.NoteblocksLive;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PlayerLeaveJoinListener implements Listener {
-    private final MCMidi musicManager;
+    private final NoteblocksLive musicManager;
     public String individualLoopSong; // maybe improve this. This was rushed and may have a better implementation.
 
-    public PlayerLeaveJoinListener(MCMidi musicManager) {
+    public PlayerLeaveJoinListener(NoteblocksLive musicManager) {
         this.musicManager = musicManager;
     }
 

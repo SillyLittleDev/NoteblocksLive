@@ -1,4 +1,4 @@
-package com.dev.mcmidi.song.songPlayers;
+package com.dev.nbl.song.songPlayers;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.manager.player.PlayerManager;
@@ -6,8 +6,8 @@ import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.protocol.sound.SoundCategory;
 import com.github.retrooper.packetevents.util.Vector3i;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSoundEffect;
-import com.dev.mcmidi.MCMidi;
-import com.dev.mcmidi.util.PreciseNotes;
+import com.dev.nbl.NoteblocksLive;
+import com.dev.nbl.util.PreciseNotes;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class LocationSongPlayer extends AbstractSongPlayer {
-    private final Plugin plugin = MCMidi.getInstance();
+    private final Plugin plugin = NoteblocksLive.getInstance();
     private final PlayerManager manager;
 
     private final Location location;
@@ -45,7 +45,7 @@ public class LocationSongPlayer extends AbstractSongPlayer {
                 (int) Math.floor(location.getZ() * 8.0)
         );
 
-        MCMidi.getInstance().addSongPlayer(this, name);
+        NoteblocksLive.getInstance().addSongPlayer(this, name);
 
         if (listeners == null) listeners = new ConcurrentHashMap<>();
     }
@@ -65,7 +65,7 @@ public class LocationSongPlayer extends AbstractSongPlayer {
     public void stopSong() {
         stopNoRemove();
 
-        MCMidi.getInstance().removeSongPlayer(name);
+        NoteblocksLive.getInstance().removeSongPlayer(name);
     }
 
     public void stopNoRemove() {
