@@ -8,17 +8,23 @@ import com.github.retrooper.packetevents.protocol.sound.SoundCategory;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntitySoundEffect;
 import com.dev.nbl.NoteblocksLive;
 import com.dev.nbl.util.PreciseNotes;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 public class AudienceSongPlayer extends AbstractSongPlayer {
     private final Plugin plugin = NoteblocksLive.getInstance();
     private final PlayerManager packetEvents = PacketEvents.getAPI().getPlayerManager();
     private final ConcurrentHashMap<UUID, PacketAudienceMember> audience = new ConcurrentHashMap<>();
+    private final Set<Player> players = ConcurrentHashMap.newKeySet();
     private final String name;
 
     public AudienceSongPlayer(String name, Player... players) {
@@ -33,8 +39,16 @@ public class AudienceSongPlayer extends AbstractSongPlayer {
         audience.put(player.getUniqueId(), new PacketAudienceMember(packetEvents.getUser(player), player.getEntityId()));
     }
 
+    public void removePlayer(Player player) {
+        audience.remove(player.getUniqueId());
+        players.remove(player);
+    }
+
     public void removePlayer(UUID player) {
         audience.remove(player);
+
+        Player p = Bukkit.getPlayer(player);
+        players.remove(p);
     }
 
     public void stopSong() {
@@ -54,6 +68,11 @@ public class AudienceSongPlayer extends AbstractSongPlayer {
         }
 
         startPlayback(song);
+    }
+
+    @Override
+    protected void sendAudienceMessage(Component message) {
+        for (Player p : players) p.sendActionBar(message);
     }
 
     @Override

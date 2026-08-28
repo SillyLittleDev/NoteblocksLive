@@ -4,6 +4,8 @@ import com.google.common.collect.Queues;
 import com.dev.nbl.NoteblocksLive;
 import com.dev.nbl.util.PreciseNotes;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -13,11 +15,15 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractSongPlayer {
+    public static boolean defaultNowPlaying = false;
+
     protected Iterator<PreciseNotes.PacketPreciseNote> song;
     protected ScheduledTask songTask;
+    protected ScheduledTask nowPlayingTask;
     protected String songName;
     protected int loop = 0;
     protected float volume = 1;
+    protected boolean nowPlayingMessage = defaultNowPlaying;
 
     private static final long PRE_QUEUE_NOTE_TIME = TimeUnit.MILLISECONDS.toNanos(100);
     private static final long MIN_REFILL_DELAY_NS = TimeUnit.MILLISECONDS.toNanos(10);
@@ -38,7 +44,9 @@ public abstract class AbstractSongPlayer {
     abstract public void stopSong();
     abstract public void startSong(ArrayList<PreciseNotes.PacketPreciseNote> song, String songName);
     public abstract void addPlayer(Player player);
+    public abstract void removePlayer(Player player);
     public abstract void removePlayer(UUID player);
+    protected abstract void sendAudienceMessage(Component message);
 
     protected abstract void playPacketNote(PreciseNotes.PacketPreciseNote note);
 
@@ -70,6 +78,18 @@ public abstract class AbstractSongPlayer {
         }
 
         queueLookahead(playbackGeneration);
+
+        if (nowPlayingMessage) nowPlayingTask = Bukkit.getAsyncScheduler().runAtFixedRate(
+                NoteblocksLive.getInstance(),
+                _ -> sendAudienceMessage(
+                        Component.text("♫ ", NamedTextColor.LIGHT_PURPLE)
+                                .append(Component.text(songName, NamedTextColor.WHITE))
+                                .append(Component.text(" ♫", NamedTextColor.LIGHT_PURPLE))
+                ),
+                10,
+                1000,
+                TimeUnit.MILLISECONDS
+        );
     }
 
     private synchronized void queueLookahead(long generation) {
@@ -101,7 +121,7 @@ public abstract class AbstractSongPlayer {
 
             songTask = Bukkit.getAsyncScheduler().runDelayed(
                     plugin,
-                    task -> queueLookahead(generation),
+                    _ -> queueLookahead(generation),
                     delayNs,
                     TimeUnit.NANOSECONDS
             );
@@ -171,6 +191,11 @@ public abstract class AbstractSongPlayer {
         if (songTask != null) {
             songTask.cancel();
             songTask = null;
+        }
+
+        if (nowPlayingTask != null) {
+            nowPlayingTask.cancel();
+            nowPlayingTask = null;
         }
 
         ScheduledTask queuedTask;
@@ -258,6 +283,19 @@ public abstract class AbstractSongPlayer {
 
     public void setVolume(float volume) {
         this.volume = volume;
+    }
+
+    public boolean toggleNowPlaying() {
+        nowPlayingMessage = !nowPlayingMessage;
+        return nowPlayingMessage;
+    }
+
+    public void setNowPlaying(boolean nowPlayingMessage) {
+        this.nowPlayingMessage = nowPlayingMessage;
+    }
+
+    public boolean nowPlayingMessage() {
+        return nowPlayingMessage;
     }
 
     private record TimedNoteGroup(long timeNs, List<PreciseNotes.PacketPreciseNote> notes, int index) {}

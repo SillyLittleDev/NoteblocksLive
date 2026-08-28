@@ -9,6 +9,8 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSo
 import com.dev.nbl.NoteblocksLive;
 import com.dev.nbl.util.PreciseNotes;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -30,6 +32,7 @@ public class LocationSongPlayer extends AbstractSongPlayer {
     private final String name;
 
     private ConcurrentMap<UUID, User> listeners = new ConcurrentHashMap<>();
+    private Set<Player> players = ConcurrentHashMap.newKeySet();
 
     private ScheduledTask audienceTask;
 
@@ -56,10 +59,19 @@ public class LocationSongPlayer extends AbstractSongPlayer {
         User user = manager.getUser(player);
 
         listeners.put(player.getUniqueId(), user);
+        players.add(player);
+    }
+
+    public void removePlayer(Player player) {
+        listeners.remove(player.getUniqueId());
+        players.remove(player);
     }
 
     public void removePlayer(UUID player) {
         listeners.remove(player);
+
+        Player p = Bukkit.getPlayer(player);
+        players.remove(p);
     }
 
     public void stopSong() {
@@ -77,6 +89,7 @@ public class LocationSongPlayer extends AbstractSongPlayer {
         }
 
         listeners.clear();
+        players.clear();
     }
 
     public void startSong(ArrayList<PreciseNotes.PacketPreciseNote> song, String name) {
@@ -100,19 +113,20 @@ public class LocationSongPlayer extends AbstractSongPlayer {
                 .runAtFixedRate(
                         plugin,
                         location,
-                        task -> {
-                            Set<UUID> nearbyPlayers = new HashSet<>();
+                        _ -> {
+                            listeners.clear();
+                            players.clear();
 
-                            for (Player player : location.getWorld().getNearbyPlayers(location, radius)) {
-                                nearbyPlayers.add(player.getUniqueId());
-                                addPlayer(player);
-                            }
-
-                            listeners.keySet().removeIf(uuid -> !nearbyPlayers.contains(uuid));
+                            for (Player player : location.getWorld().getNearbyPlayers(location, radius)) addPlayer(player);
                         },
                         1L,
                         5L
                 );
+    }
+
+    @Override
+    protected void sendAudienceMessage(Component message) {
+        for (Player p : players) p.sendActionBar(message);
     }
 
     @Override

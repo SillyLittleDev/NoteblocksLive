@@ -165,7 +165,7 @@ public class SongCommand {
                                                     }
 
                                                     FollowSongPlayer fsPLayer = new FollowSongPlayer(player, name);
-                                                    fsPLayer.startSong(notes, name);
+                                                    fsPLayer.startSong(notes, song);
 
                                                     player.sendMessage(
                                                             Component.text("Now playing song: ", NamedTextColor.WHITE)
@@ -208,8 +208,8 @@ public class SongCommand {
                                                         return Command.SINGLE_SUCCESS;
                                                     }
 
-                                                    LocationSongPlayer lsPLayer = new LocationSongPlayer(player.getLocation(), 30, name);
-                                                    lsPLayer.startSong(notes, name);
+                                                    LocationSongPlayer lsPlayer = new LocationSongPlayer(player.getLocation(), 30, name);
+                                                    lsPlayer.startSong(notes, song);
 
                                                     player.sendMessage(
                                                             Component.text("Now playing song: ", NamedTextColor.WHITE)
@@ -227,14 +227,6 @@ public class SongCommand {
                                 .then(Commands.argument("song", StringArgumentType.greedyString())
                                         .suggests((_, builder) -> suggestSongs(builder))
                                         .executes(context -> {
-                                            if (!(context.getSource().getSender() instanceof LivingEntity player)) {
-                                                context.getSource().getSender().sendMessage(
-                                                        Component.text("This must be used by a player.", NamedTextColor.RED)
-                                                );
-
-                                                return Command.SINGLE_SUCCESS;
-                                            }
-
                                             String song = StringArgumentType.getString(context, "song");
                                             ArrayList<PreciseNotes.PacketPreciseNote> notes = songManager.getSongNotes(song);
 
@@ -252,7 +244,7 @@ public class SongCommand {
                                             playerLeaveJoinListener.individualLoopSong = song;
                                             for (Player p : Bukkit.getOnlinePlayers()) musicManager.playSong(p, song, -1);
 
-                                            player.sendMessage(
+                                            context.getSource().getSender().sendMessage(
                                                     Component.text("Now playing song: ", NamedTextColor.WHITE)
                                                             .append(Component.text(song, NamedTextColor.GREEN))
                                                             .append(Component.text(" as an individual loop.", NamedTextColor.WHITE))
@@ -261,6 +253,13 @@ public class SongCommand {
                                             return Command.SINGLE_SUCCESS;
                                         })
                                 )
+                                .executes(context -> {
+                                    playerLeaveJoinListener.individualLoopSong = null;
+
+                                    context.getSource().getSender().sendMessage(Component.text("Individual loop song disabled.", NamedTextColor.WHITE));
+
+                                    return Command.SINGLE_SUCCESS;
+                                })
                         )
                 )
                 .then(Commands.literal("controls")
@@ -669,6 +668,9 @@ public class SongCommand {
                                 .executes(context -> {
                                     musicManager.enableCustomSounds = !musicManager.enableCustomSounds;
 
+                                    musicManager.getConfig().set("enable-custom-sounds", musicManager.enableCustomSounds);
+                                    musicManager.saveConfig();
+
                                     songManager.load();
 
                                     context.getSource().getSender().sendMessage(
@@ -683,6 +685,29 @@ public class SongCommand {
                                     );
                                     context.getSource().getSender().sendMessage(
                                             Component.text("Disabling it will make many songs not sound right, unless they are made with it in mind.", NamedTextColor.RED)
+                                    );
+
+                                    return Command.SINGLE_SUCCESS;
+                                })
+                        )
+                        .then(Commands.literal("toggle-now-playing")
+                                .then(Commands.literal("-update")
+                                        .executes(context -> {
+                                            toggleNowPlayingMessage(context.getSource().getSender());
+
+                                            boolean nowPlaying = AbstractSongPlayer.defaultNowPlaying;
+
+                                            for (IndividualSongPlayer isp : musicManager.getSongPlayers().values()) isp.setNowPlaying(nowPlaying);
+                                            for (AbstractSongPlayer asp : musicManager.getOtherPlayers().values()) asp.setNowPlaying(nowPlaying);
+                                            return Command.SINGLE_SUCCESS;
+                                        })
+                                )
+                                .executes(context -> {
+                                    toggleNowPlayingMessage(context.getSource().getSender());
+
+                                    context.getSource().getSender().sendMessage(
+                                            Component.text("This disabled for all future song players created. To update current ones and players already logged in, add -update to the end of the command.",
+                                                    NamedTextColor.YELLOW)
                                     );
 
                                     return Command.SINGLE_SUCCESS;
@@ -809,6 +834,22 @@ public class SongCommand {
                         )
                 )
                 .build()
+        );
+    }
+
+    private void toggleNowPlayingMessage(CommandSender sender) {
+        AbstractSongPlayer.defaultNowPlaying = !AbstractSongPlayer.defaultNowPlaying;
+
+        musicManager.getConfig().set("default-now-playing", AbstractSongPlayer.defaultNowPlaying);
+        musicManager.saveConfig();
+
+        sender.sendMessage(
+                Component.text("Now playing messages are now ", NamedTextColor.WHITE)
+                        .append(Component.text(
+                                (AbstractSongPlayer.defaultNowPlaying) ? "Enabled" : "Disabled",
+                                (AbstractSongPlayer.defaultNowPlaying) ? NamedTextColor.GREEN : NamedTextColor.RED
+                        ))
+                        .append(Component.text(" by default.", NamedTextColor.WHITE))
         );
     }
 

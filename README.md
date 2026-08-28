@@ -66,6 +66,6 @@ Learn more about how the custom instrument implementation works in [INSTRUMENTS.
 
 ### ☐ Planned features
  - Add music fading / transitions
- - Add a now playing display option (of, on, on-start)
+ - Add a now playing display option which only shows at the start of each song.
  - Add more in depth playlists
  - Add pause and unpause

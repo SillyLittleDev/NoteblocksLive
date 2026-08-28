@@ -9,3 +9,6 @@ use-default-pack-download: true
 
 # If the above default pack should be required. Ignored if use default pack is disabled.
 require-resource-pack: true
+
+# If now playing messages should be on by default.
+default-now-playing: true

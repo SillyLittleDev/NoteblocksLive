@@ -7,6 +7,7 @@ import com.github.retrooper.packetevents.protocol.sound.SoundCategory;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntitySoundEffect;
 import com.dev.nbl.NoteblocksLive;
 import com.dev.nbl.util.PreciseNotes;
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -16,12 +17,14 @@ import java.util.UUID;
 public class IndividualSongPlayer extends AbstractSongPlayer {
     private final Plugin plugin = NoteblocksLive.getInstance();
     private final int playerID;
+    private final Player player;
     private final User packetUser;
 
     public IndividualSongPlayer(Player player) {
         this.playerID = player.getEntityId();
         PlayerManager packetEvents = PacketEvents.getAPI().getPlayerManager();
         this.packetUser = packetEvents.getUser(player);
+        this.player = player;
     }
 
     public User getPacketUser() {
@@ -48,11 +51,17 @@ public class IndividualSongPlayer extends AbstractSongPlayer {
 
     // todo: update to only have these in multi-audience players
     @Override
-    public void addPlayer(Player player) {
-    }
+    public void addPlayer(Player player) {}
 
     @Override
-    public void removePlayer(UUID player) {
+    public void removePlayer(UUID player) {}
+
+    @Override
+    public void removePlayer(Player player) {}
+
+    @Override
+    protected void sendAudienceMessage(Component message) {
+        player.sendActionBar(message);
     }
 
     @Override

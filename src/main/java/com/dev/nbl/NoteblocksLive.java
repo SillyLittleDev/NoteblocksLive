@@ -28,8 +28,8 @@ import java.util.HashMap;
 import java.util.logging.Level;
 
 public final class NoteblocksLive extends JavaPlugin {
-    private static SongManager songManager;
     private static NoteblocksLive musicManager;
+    private SongManager songManager;
 
     private final HashMap<Player, IndividualSongPlayer> songPlayers = new HashMap<>();
     private final HashMap<String, AbstractSongPlayer> otherPlayers = new HashMap<>(); // For location and follow players
@@ -62,9 +62,12 @@ public final class NoteblocksLive extends JavaPlugin {
             return;
         }
 
+        saveDefaultConfig();
+
         enableCustomSounds = getConfig().getBoolean("enable-custom-sounds", true);
         enableDefaultResourcePack = getConfig().getBoolean("use-default-pack-download", true);
         requireResourcePack = getConfig().getBoolean("require-resource-pack", true);
+        AbstractSongPlayer.defaultNowPlaying = getConfig().getBoolean("default-now-playing", true);
 
         PacketEvents.getAPI().init();
         musicManager = this;
@@ -100,9 +103,6 @@ public final class NoteblocksLive extends JavaPlugin {
     @Override
     public void onDisable() {
         PacketEvents.getAPI().terminate();
-
-        getConfig().set("enable-custom-sounds", enableCustomSounds);
-        saveDefaultConfig();
     }
 
     public void reload() {
@@ -167,12 +167,11 @@ public final class NoteblocksLive extends JavaPlugin {
         sp.startSong(song);
         sp.setLoops(loop);
 
-        player.sendActionBar(
+        if (!sp.nowPlayingMessage()) player.sendActionBar(
                 Component.text("Now Playing: ", NamedTextColor.WHITE)
                         .append(Component.text(song, NamedTextColor.LIGHT_PURPLE, TextDecoration.BOLD))
         );
     }
-
 
     public void stopSong(Player player) {
         if (!songPlayers.containsKey(player)) return;
@@ -190,9 +189,9 @@ public final class NoteblocksLive extends JavaPlugin {
         songPlayers.remove(player);
 
         for (AbstractSongPlayer sp : songPlayers.values()) {
-            if (sp instanceof AudienceSongPlayer asp) asp.removePlayer(player.getUniqueId());
-            else if (sp instanceof LocationSongPlayer lsp) lsp.removePlayer(player.getUniqueId());
-            else if (sp instanceof FollowSongPlayer fsp) fsp.removePlayer(player.getUniqueId());
+            if (sp instanceof AudienceSongPlayer asp) asp.removePlayer(player);
+            else if (sp instanceof LocationSongPlayer lsp) lsp.removePlayer(player);
+            else if (sp instanceof FollowSongPlayer fsp) fsp.removePlayer(player);
         }
     }
 
@@ -201,7 +200,7 @@ public final class NoteblocksLive extends JavaPlugin {
     }
 
     public static SongManager getSongManager() {
-        return songManager;
+        return getInstance().songManager;
     }
 
     public static NoteblocksLive getInstance() {

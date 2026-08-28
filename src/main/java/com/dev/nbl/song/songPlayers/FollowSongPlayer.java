@@ -8,6 +8,8 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEn
 import com.dev.nbl.NoteblocksLive;
 import com.dev.nbl.util.PreciseNotes;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -27,6 +29,7 @@ public class FollowSongPlayer extends AbstractSongPlayer {
     private final String name;
 
     private final ConcurrentMap<UUID, User> listeners = new ConcurrentHashMap<>();
+    private final Set<Player> players = ConcurrentHashMap.newKeySet();
     private ScheduledTask audienceTask;
 
     public FollowSongPlayer(LivingEntity entity, String name) {
@@ -41,10 +44,19 @@ public class FollowSongPlayer extends AbstractSongPlayer {
         User user = manager.getUser(player);
 
         listeners.put(player.getUniqueId(), user);
+        players.add(player);
+    }
+
+    public void removePlayer(Player player) {
+        listeners.remove(player.getUniqueId());
+        players.remove(player);
     }
 
     public void removePlayer(UUID player) {
         listeners.remove(player);
+
+        Player p = Bukkit.getPlayer(player);
+        players.remove(p);
     }
 
     public void stopSong() {
@@ -82,7 +94,7 @@ public class FollowSongPlayer extends AbstractSongPlayer {
     private void startListenerUpdates() {
         audienceTask = toFollow.getScheduler().runAtFixedRate(
                 plugin,
-                task -> updateListeners(),
+                _ -> updateListeners(),
                 this::stopSong,
                 1L,
                 5L
@@ -90,19 +102,17 @@ public class FollowSongPlayer extends AbstractSongPlayer {
     }
 
     private void updateListeners() {
-        Set<UUID> updated = ConcurrentHashMap.newKeySet();
+        listeners.clear();
+        players.clear();
 
-        for (Player player : toFollow.getTrackedBy()) {
-            updated.add(player.getUniqueId());
-            addPlayer(player);
-        }
+        for (Player player : toFollow.getTrackedBy()) addPlayer(player);
 
-        if (toFollow instanceof Player followedPlayer) {
-            updated.add(followedPlayer.getUniqueId());
-            addPlayer(followedPlayer);
-        }
+        if (toFollow instanceof Player followedPlayer) addPlayer(followedPlayer);
+    }
 
-        listeners.keySet().removeIf(uuid -> !updated.contains(uuid));
+    @Override
+    protected void sendAudienceMessage(Component message) {
+        for (Player p : players) p.sendActionBar(message);
     }
 
     @Override
