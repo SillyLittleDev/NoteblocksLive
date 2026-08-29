@@ -35,7 +35,7 @@ public class ResourcePackListener implements Listener {
                 .required(plugin.requireResourcePack)
                 .packs(ResourcePackInfo.resourcePackInfo()
                         .id(uuid)
-                        .uri(URI.create("https://github.com/SillyLittleDev/MCMidi/blob/main/src/main/resources/pack-26.2.zip"))
+                        .uri(URI.create("https://github.com/SillyLittleDev/NoteblocksLive/releases/download/v1.0.0/pack-26.2.zip"))
                         .hash("6a51fdb8a9f1b25da85665033e0485db735c28bf")
                 )
                 .prompt(

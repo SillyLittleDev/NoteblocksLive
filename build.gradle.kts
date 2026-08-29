@@ -25,17 +25,17 @@ tasks {
     shadowJar {
         relocate(
             "com.github.retrooper.packetevents",
-            "com.dev.mcmidi.libs.packetevents.api"
+            "com.dev.nbl.libs.packetevents.api"
         )
 
         relocate(
             "io.github.retrooper.packetevents",
-            "com.dev.mcmidi.libs.packetevents.impl"
+            "com.dev.nbl.libs.packetevents.impl"
         )
 
         relocate(
             "com.google.gson",
-            "com.dev.mcmidi.libs.packetevents.gson"
+            "com.dev.nbl.libs.packetevents.gson"
         )
 
         archiveClassifier.set("")
