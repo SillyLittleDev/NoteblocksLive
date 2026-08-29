@@ -14,6 +14,7 @@ import com.dev.nbl.util.MidiFileConverter;
 import com.dev.nbl.util.NBSFileConverter;
 import com.dev.nbl.util.PreciseNotes;
 import com.dev.nbl.util.SoundKeyResolver;
+import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
@@ -44,7 +45,7 @@ public class SongCommand {
     }
 
     public void register(Commands commands) {
-        commands.register(Commands.literal("songs")
+        LiteralCommandNode<CommandSourceStack> command = Commands.literal("songs")
                 .requires(stack -> hasAnyPermission(stack.getSender()))
                 .then(Commands.literal("reload")
                         .requires(stack -> stack.getSender().hasPermission("songs.reload"))
@@ -833,7 +834,12 @@ public class SongCommand {
                                 )
                         )
                 )
-                .build()
+                .build();
+
+        commands.register(
+                command,
+                "Used to play and manage songs.",
+                List.of("noteblockslive", "nbl")
         );
     }
 
