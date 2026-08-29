@@ -10,6 +10,7 @@ import com.dev.nbl.listeners.ResourcePackListener;
 import com.dev.nbl.song.SongManager;
 import com.dev.nbl.util.CustomInstrumentRegistry;
 import com.dev.nbl.util.MidiFileConverter;
+import com.dev.nbl.util.NBSFileConverter;
 import com.dev.nbl.util.PreciseNotes;
 import com.dev.nbl.util.SoundKeyResolver;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
@@ -76,6 +77,7 @@ public final class NoteblocksLive extends JavaPlugin {
 
         SoundKeyResolver.setCustomInstrumentRegistry(customInstrumentRegistry);
         MidiFileConverter.setCustomInstrumentRegistry(customInstrumentRegistry);
+        NBSFileConverter.setCustomInstrumentRegistry(customInstrumentRegistry);
 
         songManager = new SongManager();
         songManager.load();
@@ -110,6 +112,7 @@ public final class NoteblocksLive extends JavaPlugin {
 
         SoundKeyResolver.setCustomInstrumentRegistry(customInstrumentRegistry);
         MidiFileConverter.setCustomInstrumentRegistry(customInstrumentRegistry);
+        NBSFileConverter.setCustomInstrumentRegistry(customInstrumentRegistry);
         songManager.load();
 
         enableDefaultResourcePack = getConfig().getBoolean("use-default-pack-download", true);

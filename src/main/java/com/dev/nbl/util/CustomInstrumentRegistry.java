@@ -7,7 +7,6 @@ import java.io.File;
 import java.util.*;
 
 public final class CustomInstrumentRegistry {
-
     private final List<CustomInstrumentSoundSet> sets;
     private final Map<String, CustomInstrumentSoundSet> byId;
 
@@ -109,5 +108,9 @@ public final class CustomInstrumentRegistry {
         CustomInstrumentSoundSet.Part part = getPart(token);
 
         return set.soundKey(part, bank);
+    }
+
+    public List<CustomInstrumentSoundSet> getSets() {
+        return sets;
     }
 }

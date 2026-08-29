@@ -38,6 +38,11 @@ public final class NBSFileConverter {
     };
 
     private static List<SoundCandidate> availableSounds;
+    private static CustomInstrumentRegistry customInstrumentRegistry = CustomInstrumentRegistry.empty();
+
+    public static void setCustomInstrumentRegistry(CustomInstrumentRegistry registry) {
+        customInstrumentRegistry = (registry == null) ? CustomInstrumentRegistry.empty() : registry;
+    }
 
     private static List<SoundCandidate> getAvailableSounds() {
         if (availableSounds != null) return availableSounds;
@@ -77,7 +82,7 @@ public final class NBSFileConverter {
 
         if (reader.remaining() > 0 && header.layerCount() > 0) readLayers(reader, header.version(), header.layerCount(), layerVolumes);
 
-        List<NBSInstrument> customInstruments = reader.remaining() > 0 ? readCustomInstruments(reader) : List.of();
+        List<NBSInstrument> customInstruments = reader.remaining() > 0 ? readCustomInstruments(reader, false) : List.of();
 
         ArrayList<TimedNote> timedNotes = new ArrayList<>(rawNotes.size());
 
@@ -148,12 +153,13 @@ public final class NBSFileConverter {
 
         if (reader.remaining() > 0 && header.layerCount() > 0) readLayers(reader, header.version(), header.layerCount(), layerVolumes);
 
-        List<NBSInstrument> customInstruments = reader.remaining() > 0 ? readCustomInstruments(reader) : List.of();
+        List<NBSInstrument> customInstruments = reader.remaining() > 0 ? readCustomInstruments(reader, !ignoreExtended) : List.of();
 
         ArrayList<TimedPreciseNoteData> timedNotes = new ArrayList<>(rawNotes.size());
 
         for (RawNote note : rawNotes) {
             Sound sound;
+            CustomInstrumentSoundSet extendedCustom = null;
             boolean custom;
             int baseKey;
 
@@ -173,6 +179,7 @@ public final class NBSFileConverter {
                 NBSInstrument instrument = customInstruments.get(customIndex);
 
                 sound = instrument.sound();
+                extendedCustom = instrument.extendedCustom();
                 baseKey = instrument.soundKey();
                 custom = true;
             }
@@ -199,14 +206,23 @@ public final class NBSFileConverter {
             };
 
             String soundKey;
-            String rawSoundKey = sound.getName().toString();
-            String croppedSoundKey = rawSoundKey.substring(rawSoundKey.lastIndexOf('.') + 1);
 
-            if (!custom) {
-                if (ignoreExtended) soundKey = croppedSoundKey;
-                else soundKey = SoundKeyResolver.getSoundKey(croppedSoundKey, octave, tone, sharp);
+            if (extendedCustom != null) {
+                CustomInstrumentSoundSet.Part part = extendedCustom.looping()
+                        ? CustomInstrumentSoundSet.Part.ATTACK
+                        : CustomInstrumentSoundSet.Part.SOUND;
+
+                soundKey = SoundKeyResolver.getSoundKey(extendedCustom.token(part), octave, tone, sharp);
+            } else {
+                String rawSoundKey = sound.getName().toString();
+                String croppedSoundKey = rawSoundKey.substring(rawSoundKey.lastIndexOf('.') + 1);
+
+                if (!custom) {
+                    if (ignoreExtended) soundKey = croppedSoundKey;
+                    else soundKey = SoundKeyResolver.getSoundKey(croppedSoundKey, octave, tone, sharp);
+                }
+                else soundKey = rawSoundKey;
             }
-            else soundKey = rawSoundKey;
 
             int newOctave = (!ignoreExtended) ? SoundKeyResolver.calculateNewOctave(octave, tone, sharp) : octave;
             double volume = (layerVolumes[note.layer()] * note.velocity()) / 10000.0;
@@ -251,7 +267,7 @@ public final class NBSFileConverter {
     }
 
 
-    private static List<NBSInstrument> readCustomInstruments(Reader reader) throws IOException {
+    private static List<NBSInstrument> readCustomInstruments(Reader reader, boolean includeExtendedCustom) throws IOException {
         int count = reader.readUnsignedByte();
 
         ArrayList<NBSInstrument> instruments = new ArrayList<>(count);
@@ -263,7 +279,8 @@ public final class NBSFileConverter {
 
             reader.readUnsignedByte();
 
-            instruments.add(new NBSInstrument(resolveCustomSound(name, soundFile), soundKey));
+            ResolvedCustomSound resolved = resolveCustomSound(name, soundFile, includeExtendedCustom);
+            instruments.add(new NBSInstrument(resolved.sound(), resolved.extendedCustom(), soundKey));
         }
 
         return instruments;
@@ -374,7 +391,7 @@ public final class NBSFileConverter {
         }
     }
 
-    private static Sound resolveCustomSound(String instrumentName, String soundFile) {
+    private static ResolvedCustomSound resolveCustomSound(String instrumentName, String soundFile, boolean includeExtendedCustom) {
         String file = normalizeSoundName(soundFile);
         String name = normalizeSoundName(instrumentName);
 
@@ -382,8 +399,8 @@ public final class NBSFileConverter {
         String nameBase = basename(name);
         List<String> hints = getSoundEventHints(soundFile, instrumentName);
 
-        SoundCandidate best = null;
-        int bestScore = Integer.MIN_VALUE;
+        SoundCandidate bestVanilla = null;
+        int bestVanillaScore = Integer.MIN_VALUE;
 
         for (SoundCandidate candidate : getAvailableSounds()) {
             int score = scoreCandidate(file, fileBase, name, nameBase, candidate);
@@ -399,19 +416,86 @@ public final class NBSFileConverter {
                 score += tokenSimilarity(hint, candidate.soundId()) * 500;
             }
 
-            if (score > bestScore) {
-                bestScore = score;
-                best = candidate;
+            if (score > bestVanillaScore) {
+                bestVanillaScore = score;
+                bestVanilla = candidate;
             }
         }
 
-        if (best == null || bestScore < 1000)
+        CustomInstrumentSoundSet bestExtended = null;
+        int bestExtendedScore = Integer.MIN_VALUE;
+
+        if (includeExtendedCustom) {
+            for (CustomInstrumentSoundSet set : customInstrumentRegistry.getSets()) {
+                int score = scoreExtendedCandidate(file, fileBase, name, nameBase, hints, set);
+
+                if (score > bestExtendedScore) {
+                    bestExtendedScore = score;
+                    bestExtended = set;
+                }
+            }
+        }
+
+        if (bestExtended != null && bestExtendedScore > bestVanillaScore && bestExtendedScore >= 1000) {
+            NoteblocksLive.getInstance().getLogger().warning(
+                    "Bound custom NBS sound: " + instrumentName
+                            + " to extended custom instrument: " + bestExtended.id()
+            );
+            return new ResolvedCustomSound(null, bestExtended);
+        }
+
+        if (bestVanilla == null || bestVanillaScore < 1000)
             throw new IllegalArgumentException("Could not confidently map NBS custom instrument '" + instrumentName +
-                    "' with sound file '" + soundFile + "' to a Minecraft sound.");
+                    "' with sound file '" + soundFile + "' to a Minecraft or configured custom sound.");
 
-        NoteblocksLive.getInstance().getLogger().warning("Bound custom NBS sound: " + instrumentName + " to minecraft sound: " + best.registeredName);
+        NoteblocksLive.getInstance().getLogger().warning(
+                "Bound custom NBS sound: " + instrumentName + " to minecraft sound: " + bestVanilla.registeredName
+        );
 
-        return best.sound();
+        return new ResolvedCustomSound(bestVanilla.sound(), null);
+    }
+
+    private static int scoreExtendedCandidate(String nbsFile, String fileBase, String nbsName, String nameBase, List<String> hints, CustomInstrumentSoundSet set) {
+        String instrument = normalizeSoundName(set.instrument());
+        String id = normalizeSoundName(set.id());
+        String qualified = normalizeSoundName(set.namespace() + "/" + set.instrument());
+
+        int best = Integer.MIN_VALUE;
+
+        for (String candidate : List.of(instrument, id, qualified)) {
+            if (candidate.isEmpty()) continue;
+
+            String candidateBase = basename(candidate);
+            int score = 0;
+
+            if (!nbsFile.isEmpty()) {
+                if (nbsFile.equals(candidate)) score += 20000;
+                if (nbsFile.endsWith(candidate)) score += 8000;
+            }
+
+            if (!fileBase.isEmpty() && fileBase.equals(candidateBase)) score += 10000;
+
+            if (!nbsName.isEmpty()) {
+                if (nbsName.equals(candidate)) score += 4000;
+                if (!nameBase.isEmpty() && nameBase.equals(candidateBase)) score += 3000;
+            }
+
+            score += tokenSimilarity(nbsFile, candidate) * 100;
+            score += tokenSimilarity(nbsName, candidate) * 50;
+
+            if (!fileBase.isEmpty()) score += fuzzyScore(fileBase, candidateBase);
+            if (!nameBase.isEmpty()) score += fuzzyScore(nameBase, candidateBase) / 2;
+
+            for (String hint : hints) {
+                if (hint.equals(candidate)) score += 50000;
+                if (candidate.endsWith(hint)) score += 25000;
+                score += tokenSimilarity(hint, candidate) * 500;
+            }
+
+            best = Math.max(best, score);
+        }
+
+        return best;
     }
 
     private static List<String> getSoundEventHints(String soundFile, String instrumentName) {
@@ -436,10 +520,6 @@ public final class NBSFileConverter {
                 case "hit", "hurt" -> "hurt";
                 case "death", "die" -> "death";
                 case "say", "idle", "ambient" -> "ambient";
-                case "step" -> "step";
-                case "attack" -> "attack";
-                case "shoot" -> "shoot";
-                case "jump" -> "jump";
                 default -> sample;
             };
 
@@ -613,7 +693,9 @@ public final class NBSFileConverter {
 
     private record TimedPreciseNoteData(long timestamp, int layer, String sound, int octave, char tone, boolean sharp, double volume) {}
 
-    private record NBSInstrument(Sound sound, int soundKey) {}
+    private record NBSInstrument(Sound sound, CustomInstrumentSoundSet extendedCustom, int soundKey) {}
+
+    private record ResolvedCustomSound(Sound sound, CustomInstrumentSoundSet extendedCustom) {}
 
     private record SoundCandidate(Sound sound, String registeredName, String soundId, String registeredBase, String soundIdBase) { }
 

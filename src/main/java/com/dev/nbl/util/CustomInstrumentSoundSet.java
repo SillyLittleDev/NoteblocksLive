@@ -219,6 +219,14 @@ public final class CustomInstrumentSoundSet {
         return referenceC;
     }
 
+    public String namespace() {
+        return namespace;
+    }
+
+    public String instrument() {
+        return instrument;
+    }
+
     private static Timing readRequiredTiming(File file, YamlConfiguration config, String path) {
         ConfigurationSection section = config.getConfigurationSection(path);
 
