@@ -12,3 +12,9 @@ require-resource-pack: true
 
 # If now playing messages should be on by default.
 default-now-playing: true
+
+# The prefix and suffix around the song name for the now playing visuals.
+# Uses mini-message formatting.
+now-playing:
+  prefix: <light_purple>♫ </light_purple>
+  suffix: <light_purple> ♫</light_purple>

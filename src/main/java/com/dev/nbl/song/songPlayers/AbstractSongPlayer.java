@@ -16,6 +16,8 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractSongPlayer {
     public static boolean defaultNowPlaying = false;
+    public static Component nowPlayingPrefix;
+    public static Component nowPlayingSuffix;
 
     protected Iterator<PreciseNotes.PacketPreciseNote> song;
     protected ScheduledTask songTask;
@@ -79,17 +81,19 @@ public abstract class AbstractSongPlayer {
 
         queueLookahead(playbackGeneration);
 
-        if (nowPlayingMessage) nowPlayingTask = Bukkit.getAsyncScheduler().runAtFixedRate(
-                NoteblocksLive.getInstance(),
-                _ -> sendAudienceMessage(
-                        Component.text("♫ ", NamedTextColor.LIGHT_PURPLE)
-                                .append(Component.text(songName, NamedTextColor.WHITE))
-                                .append(Component.text(" ♫", NamedTextColor.LIGHT_PURPLE))
-                ),
-                10,
-                1000,
-                TimeUnit.MILLISECONDS
-        );
+        if (nowPlayingMessage) {
+            Component nowPlayingMessage = nowPlayingPrefix
+                    .append(Component.text(songName, NamedTextColor.WHITE))
+                    .append(nowPlayingSuffix);
+
+            nowPlayingTask = Bukkit.getAsyncScheduler().runAtFixedRate(
+                    NoteblocksLive.getInstance(),
+                    _ -> sendAudienceMessage(nowPlayingMessage),
+                    10,
+                    1000,
+                    TimeUnit.MILLISECONDS
+            );
+        }
     }
 
     private synchronized void queueLookahead(long generation) {
@@ -163,13 +167,9 @@ public abstract class AbstractSongPlayer {
             finalGroup = group.index() == noteGroups.size() - 1;
         }
 
-        for (PreciseNotes.PacketPreciseNote note : group.notes()) {
-            playPacketNote(note);
-        }
+        for (PreciseNotes.PacketPreciseNote note : group.notes()) playPacketNote(note);
 
-        if (finalGroup) {
-            finishPlayback(generation);
-        }
+        if (finalGroup) finishPlayback(generation);
     }
 
     private void finishPlayback(long generation) {
@@ -290,8 +290,13 @@ public abstract class AbstractSongPlayer {
         return nowPlayingMessage;
     }
 
-    public void setNowPlaying(boolean nowPlayingMessage) {
+    public void setNowPlaying(boolean nowPlayingMessage, boolean stopCurrentTask) {
         this.nowPlayingMessage = nowPlayingMessage;
+
+        if (!stopCurrentTask) return;
+
+        nowPlayingTask.cancel();
+        nowPlayingTask = null;
     }
 
     public boolean nowPlayingMessage() {

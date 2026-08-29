@@ -20,8 +20,6 @@ public class ResourcePackListener implements Listener {
 
     public ResourcePackListener(NoteblocksLive plugin) {
         this.plugin = plugin;
-
-        reloadPackRequest();
     }
 
     @EventHandler

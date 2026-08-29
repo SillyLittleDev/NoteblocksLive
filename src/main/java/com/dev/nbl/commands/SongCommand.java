@@ -21,6 +21,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.LivingEntity;
@@ -698,8 +699,8 @@ public class SongCommand {
 
                                             boolean nowPlaying = AbstractSongPlayer.defaultNowPlaying;
 
-                                            for (IndividualSongPlayer isp : musicManager.getSongPlayers().values()) isp.setNowPlaying(nowPlaying);
-                                            for (AbstractSongPlayer asp : musicManager.getOtherPlayers().values()) asp.setNowPlaying(nowPlaying);
+                                            for (IndividualSongPlayer isp : musicManager.getSongPlayers().values()) isp.setNowPlaying(nowPlaying, true);
+                                            for (AbstractSongPlayer asp : musicManager.getOtherPlayers().values()) asp.setNowPlaying(nowPlaying, true);
                                             return Command.SINGLE_SUCCESS;
                                         })
                                 )
@@ -713,6 +714,60 @@ public class SongCommand {
 
                                     return Command.SINGLE_SUCCESS;
                                 })
+                        )
+                        .then(Commands.literal("now-playing")
+                                .then(Commands.literal("set-prefix")
+                                        .then(Commands.argument("input", StringArgumentType.greedyString())
+                                                .executes(context -> {
+                                                    String input = context.getArgument("input", String.class);
+                                                    Component component = MiniMessage.miniMessage().deserialize(input);
+
+                                                    AbstractSongPlayer.nowPlayingPrefix = component;
+
+                                                    context.getSource().getSender().sendMessage(
+                                                            Component.text("Now playing prefix is set to: ", NamedTextColor.WHITE)
+                                                                    .append(component)
+                                                    );
+
+                                                    musicManager.getConfig().set("now-playing.prefix", input);
+                                                    musicManager.saveConfig();
+
+                                                    return Command.SINGLE_SUCCESS;
+                                                })
+                                        )
+                                )
+                                .then(Commands.literal("set-suffix")
+                                        .then(Commands.argument("input", StringArgumentType.greedyString())
+                                                .executes(context -> {
+                                                    String input = context.getArgument("input", String.class);
+                                                    Component component = MiniMessage.miniMessage().deserialize(input);
+
+                                                    AbstractSongPlayer.nowPlayingSuffix = component;
+
+                                                    context.getSource().getSender().sendMessage(
+                                                            Component.text("Now playing suiffix is set to: ", NamedTextColor.WHITE)
+                                                                    .append(component)
+                                                    );
+
+                                                    musicManager.getConfig().set("now-playing.suffix", input);
+                                                    musicManager.saveConfig();
+
+                                                    return Command.SINGLE_SUCCESS;
+                                                })
+                                        )
+                                )
+                                .then(Commands.literal("reset")
+                                        .executes(context -> {
+                                            musicManager.getConfig().set("now-playing.prefix", "<light_purple>♫ </light_purple>");
+                                            musicManager.getConfig().set("now-playing.suffix", "<light_purple> ♫</light_purple>");
+                                            musicManager.saveConfig();
+
+                                            context.getSource().getSender().sendMessage(
+                                                    Component.text("Now playing prefix and suffix have been reset.", NamedTextColor.WHITE)
+                                            );
+                                            return Command.SINGLE_SUCCESS;
+                                        })
+                                )
                         )
                 )
                 .then(Commands.literal("utility")

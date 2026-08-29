@@ -89,7 +89,8 @@ This allows you to set the volume for a song player. Numbers from 1 to 100 will 
 For individual players, use the players username, otherwise, use the internal identifier you set when creating the song player.
 
 ## System
-This sub command is used to control plugin wide settings. For the most part, it is suggested to leave this alone. These settings are mainly for testing.
+This sub command is used to control plugin wide settings. For the most part, it is suggested to leave this alone. These settings are mainly for testing.<br>
+The only settings I would ever suggest actually using are the ones which involve the now playing stuff.
 
 ### Toggle Custom Sounds
 ```yml
@@ -109,9 +110,22 @@ Disabling this will make notes sound louder or quieter based on pitch. This was 
 ```yml
 /songs system toggle-now-playing [-update]
 ```
-This is the only system command I would suggest anyone ever use. This allows you to toggle on and off the now playing action bar message.<br>
+This allows you to toggle on and off the now playing action bar message.<br>
 The -update flag is optional. Having it included will reload all current song players to use the new now playing rule.<br>
 If -update is left out, it will only apply to new song players. Keep in mind, this means any players who logged in before the change will not be updated, as song players for individual players persist until they log off.
+
+### Now Playing
+```yml
+/songs system now-playing [set-prefix | set-suffix] <updated value>
+```
+This allows you to change the suffix or prefix of the now playing message.<br>
+This allows for the usage of the mini message format, so the default purple musical note prefix would be: ```<light_purple>♫ </light_purple>```
+
+The command:
+```yml
+/songs system now-playing reset
+```
+can be used to reset the prefix and suffix to their default values.
 
 ## Utility
 ```yml

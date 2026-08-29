@@ -19,6 +19,7 @@ import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
@@ -35,7 +36,6 @@ public final class NoteblocksLive extends JavaPlugin {
     private final HashMap<Player, IndividualSongPlayer> songPlayers = new HashMap<>();
     private final HashMap<String, AbstractSongPlayer> otherPlayers = new HashMap<>(); // For location and follow players
 
-    private CustomInstrumentRegistry customInstrumentRegistry;
     private boolean packetEventsLoaded;
     public boolean enableCustomSounds = true;
     public boolean enableDefaultResourcePack = true;
@@ -65,22 +65,9 @@ public final class NoteblocksLive extends JavaPlugin {
 
         saveDefaultConfig();
 
-        enableCustomSounds = getConfig().getBoolean("enable-custom-sounds", true);
-        enableDefaultResourcePack = getConfig().getBoolean("use-default-pack-download", true);
-        requireResourcePack = getConfig().getBoolean("require-resource-pack", true);
-        AbstractSongPlayer.defaultNowPlaying = getConfig().getBoolean("default-now-playing", true);
-
         PacketEvents.getAPI().init();
         musicManager = this;
-
-        this.customInstrumentRegistry = CustomInstrumentRegistry.load(this);
-
-        SoundKeyResolver.setCustomInstrumentRegistry(customInstrumentRegistry);
-        MidiFileConverter.setCustomInstrumentRegistry(customInstrumentRegistry);
-        NBSFileConverter.setCustomInstrumentRegistry(customInstrumentRegistry);
-
         songManager = new SongManager();
-        songManager.load();
 
         PlayerLeaveJoinListener playerLeaveJoinListener = new PlayerLeaveJoinListener(this);
         RenameListener renameListener = new RenameListener(songManager);
@@ -100,6 +87,8 @@ public final class NoteblocksLive extends JavaPlugin {
         });
 
         saveResource("pack-26.2.zip", false);
+
+        reload();
     }
 
     @Override
@@ -108,15 +97,22 @@ public final class NoteblocksLive extends JavaPlugin {
     }
 
     public void reload() {
-        this.customInstrumentRegistry = CustomInstrumentRegistry.load(this);
+        reloadConfig();
+        CustomInstrumentRegistry customInstrumentRegistry = CustomInstrumentRegistry.load(this);
 
         SoundKeyResolver.setCustomInstrumentRegistry(customInstrumentRegistry);
         MidiFileConverter.setCustomInstrumentRegistry(customInstrumentRegistry);
         NBSFileConverter.setCustomInstrumentRegistry(customInstrumentRegistry);
+
         songManager.load();
 
+        enableCustomSounds = getConfig().getBoolean("enable-custom-sounds", true);
         enableDefaultResourcePack = getConfig().getBoolean("use-default-pack-download", true);
         requireResourcePack = getConfig().getBoolean("require-resource-pack", true);
+
+        AbstractSongPlayer.defaultNowPlaying = getConfig().getBoolean("default-now-playing", true);
+        AbstractSongPlayer.nowPlayingPrefix = MiniMessage.miniMessage().deserialize(getConfig().getString("now-playing.prefix", "<light_purple>♫ </light_purple>"));
+        AbstractSongPlayer.nowPlayingSuffix = MiniMessage.miniMessage().deserialize(getConfig().getString("now-playing.suffix", "<light_purple> ♫</light_purple>"));
 
         resourcePackListener.reloadPackRequest();
     }
