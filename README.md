@@ -20,9 +20,11 @@ This plugin allows for the playing of Midi, Noteblock Studio, and custom-made so
  - Songs can be queued, looped, and skipped.
  - Each song player can have its volume updated individually.
 
+#### A full breakdown of commands can be found [here](COMMANDS.md)
+
 
 ### 📬 Reporting issues
-To report bugs, ask for features, or seek help in other ways, feel free to join the [discord](https://discord.com/UPDATETHISLINK), or create an issue on the [github](https://github.com/SillyLittleDev/MCMidi). <DONT FORGET TO MAKE A DISCORD BEFORE PUBLISHING YOU LAZY BUM><br>
+To report bugs, ask for features, or seek help in other ways, feel free to join the [discord](https://discord.com/UPDATETHISLINK), or create an issue on the [github](https://github.com/SillyLittleDev/NoteblocksLive). <DONT FORGET TO MAKE A DISCORD BEFORE PUBLISHING YOU LAZY BUM><br>
 Also, development of this plugin has been spread out over long periods of time. As such, some explanations may have mistakes, or be less than would be hoped for. Please reach out with any issues or gaps in any of the docs made for this plugin.
 
 ### 📁 Currently supported file formats
