@@ -35,8 +35,8 @@ public class ResourcePackListener implements Listener {
                 .required(plugin.requireResourcePack)
                 .packs(ResourcePackInfo.resourcePackInfo()
                         .id(uuid)
-                        .uri(URI.create("https://github.com/SillyLittleDev/NoteblocksLive/releases/download/v1.0.0/pack-26.2.zip"))
-                        .hash("6a51fdb8a9f1b25da85665033e0485db735c28bf")
+                        .uri(URI.create("https://github.com/SillyLittleDev/NoteblocksLive/releases/download/v1.0.0/pack-1.21.11.zip"))
+                        .hash("3413052b83660083df54a24192def4f6e8dec43b")
                 )
                 .prompt(
                         Component.text("Would you like to enable the resource pack for MC Midi?", NamedTextColor.WHITE)

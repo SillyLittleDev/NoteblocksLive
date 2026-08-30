@@ -65,7 +65,7 @@ public class SongCommand {
                             .then(Commands.argument("target", StringArgumentType.string())
                                 .suggests((context, builder) -> suggestPlayers(builder, context.getSource()))
                                 .then(Commands.argument("song", StringArgumentType.greedyString())
-                                        .suggests((_, builder) -> suggestSongs(builder))
+                                        .suggests((context, builder) -> suggestSongs(builder))
                                         .executes(context -> {
                                             String string = StringArgumentType.getString(context, "target");
                                             String name;
@@ -140,7 +140,7 @@ public class SongCommand {
                                 .requires(stack -> stack.getSender().hasPermission("songs.play.all"))
                                 .then(Commands.argument("name", StringArgumentType.string())
                                         .then(Commands.argument("song", StringArgumentType.greedyString())
-                                                .suggests((_, builder) -> suggestSongs(builder))
+                                                .suggests((context, builder) -> suggestSongs(builder))
                                                 .executes(context -> {
                                                     if (!(context.getSource().getSender() instanceof LivingEntity player)) {
                                                         context.getSource().getSender().sendMessage(
@@ -184,7 +184,7 @@ public class SongCommand {
                                 .requires(stack -> stack.getSender().hasPermission("songs.play.all"))
                                 .then(Commands.argument("name", StringArgumentType.string())
                                         .then(Commands.argument("song", StringArgumentType.greedyString())
-                                                .suggests((_, builder) -> suggestSongs(builder))
+                                                .suggests((context, builder) -> suggestSongs(builder))
                                                 .executes(context -> {
                                                     if (!(context.getSource().getSender() instanceof LivingEntity player)) {
                                                         context.getSource().getSender().sendMessage(
@@ -227,7 +227,7 @@ public class SongCommand {
                         .then(Commands.literal("individual-loop")
                                 .requires(stack -> stack.getSender().hasPermission("songs.play.all"))
                                 .then(Commands.argument("song", StringArgumentType.greedyString())
-                                        .suggests((_, builder) -> suggestSongs(builder))
+                                        .suggests((context, builder) -> suggestSongs(builder))
                                         .executes(context -> {
                                             String song = StringArgumentType.getString(context, "song");
                                             ArrayList<PreciseNotes.PacketPreciseNote> notes = songManager.getSongNotes(song);
@@ -270,7 +270,7 @@ public class SongCommand {
                                 .then(Commands.argument("song-player", StringArgumentType.string())
                                         .suggests((context, builder) -> suggestSongPlayer(builder, context.getSource()))
                                         .then(Commands.argument("song", StringArgumentType.greedyString())
-                                                .suggests((_, builder) -> suggestSongs(builder))
+                                                .suggests((context, builder) -> suggestSongs(builder))
                                                 .executes(context -> {
                                                     String song = StringArgumentType.getString(context, "song");
                                                     ArrayList<PreciseNotes.PacketPreciseNote> notes = songManager.getSongNotes(song);
@@ -418,7 +418,7 @@ public class SongCommand {
                                 .then(Commands.argument("song-player", StringArgumentType.string())
                                         .suggests((context, builder) -> suggestSongPlayer(builder, context.getSource()))
                                         .then(Commands.argument("times", StringArgumentType.string())
-                                                .suggests((_, builder) -> suggestLoop(builder))
+                                                .suggests((context, builder) -> suggestLoop(builder))
                                                 .executes(context -> {
                                                     String times = StringArgumentType.getString(context, "times");
                                                     int loops;
@@ -774,7 +774,7 @@ public class SongCommand {
                         .requires(stack -> stack.getSender().hasPermission("songs.utility"))
                         .then(Commands.literal("convert-to-string")
                                 .then(Commands.argument("song", StringArgumentType.greedyString())
-                                        .suggests((_, builder) -> suggestSongs(builder))
+                                        .suggests((context, builder) -> suggestSongs(builder))
                                         .executes(context -> {
                                             String song = StringArgumentType.getString(context, "song");
 
@@ -827,7 +827,7 @@ public class SongCommand {
                         )
                         .then(Commands.literal("rename")
                                 .then(Commands.argument("song", StringArgumentType.greedyString())
-                                        .suggests((_, builder) -> suggestSongs(builder))
+                                        .suggests((context, builder) -> suggestSongs(builder))
                                         .executes(context -> {
                                             if (!(context.getSource().getSender() instanceof Player player)) {
                                                 context.getSource().getSender().sendMessage(Component.text("You must be a player to use this command.", NamedTextColor.RED));
@@ -854,7 +854,7 @@ public class SongCommand {
                         )
                         .then(Commands.literal("info")
                                 .then(Commands.argument("song", StringArgumentType.greedyString())
-                                        .suggests((_, builder) -> suggestSongs(builder))
+                                        .suggests((context, builder) -> suggestSongs(builder))
                                         .executes(context -> {
                                             String song = StringArgumentType.getString(context, "song");
                                             ArrayList<PreciseNotes.PacketPreciseNote> notes = songManager.getSongNotes(song);

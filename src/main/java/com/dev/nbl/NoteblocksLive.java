@@ -86,7 +86,7 @@ public final class NoteblocksLive extends JavaPlugin {
             new SongCommand(songManager, this, playerLeaveJoinListener, renameListener).register(commands);
         });
 
-        saveResource("pack-26.2.zip", false);
+        saveResource("pack-1.21.11.zip", false);
 
         reload();
     }

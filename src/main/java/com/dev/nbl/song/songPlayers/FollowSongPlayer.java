@@ -94,7 +94,7 @@ public class FollowSongPlayer extends AbstractSongPlayer {
     private void startListenerUpdates() {
         audienceTask = toFollow.getScheduler().runAtFixedRate(
                 plugin,
-                _ -> updateListeners(),
+                task -> updateListeners(),
                 this::stopSong,
                 1L,
                 5L

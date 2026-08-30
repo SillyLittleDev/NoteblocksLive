@@ -384,14 +384,8 @@ public final class MidiFileConverter {
                 case 52, 53, 54 -> "chime";
                 default -> "bell";
             };
-        } else if (program <= 63) {
-            instrument = switch (program) {
-                case 56, 61 -> "trumpet";
-                case 57, 62 -> "trumpet_exposed";
-                case 59, 60 -> "trumpet_weathered";
-                default -> "trumpet_oxidized";
-            };
-        } else if (program <= 79) instrument = "flute";
+        } else if (program <= 63) instrument = "didgeridoo";
+        else if (program <= 79) instrument = "flute";
         else if (program <= 87) instrument = program <= 83 ? "bit" : "chime";
         else if (program <= 95) instrument = "chime";
         else if (program <= 103) instrument = "bell";

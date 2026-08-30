@@ -41,11 +41,7 @@ public final class SoundKeyResolver {
             Map.entry("iron_xylophone", "minecraft:block.note_block.iron_xylophone"),
             Map.entry("pling", "minecraft:block.note_block.pling"),
             Map.entry("snare", "minecraft:block.note_block.snare"),
-            Map.entry("xylophone", "minecraft:block.note_block.xylophone"),
-            Map.entry("trumpet", "minecraft:block.note_block.trumpet"),
-            Map.entry("trumpet_exposed", "minecraft:block.note_block.trumpet_exposed"),
-            Map.entry("trumpet_weathered", "minecraft:block.note_block.trumpet_weathered"),
-            Map.entry("trumpet_oxidized", "minecraft:block.note_block.trumpet_oxidized")
+            Map.entry("xylophone", "minecraft:block.note_block.xylophone")
     );
 
     public static String getSoundKey(String sound, int octave, char tone, boolean sharp) {

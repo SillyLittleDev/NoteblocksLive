@@ -30,11 +30,7 @@ public final class NBSFileConverter {
             Sounds.BLOCK_NOTE_BLOCK_DIDGERIDOO,
             Sounds.BLOCK_NOTE_BLOCK_BIT,
             Sounds.BLOCK_NOTE_BLOCK_BANJO,
-            Sounds.BLOCK_NOTE_BLOCK_PLING,
-            Sounds.BLOCK_NOTE_BLOCK_TRUMPET,
-            Sounds.BLOCK_NOTE_BLOCK_TRUMPET_EXPOSED,
-            Sounds.BLOCK_NOTE_BLOCK_TRUMPET_WEATHERED,
-            Sounds.BLOCK_NOTE_BLOCK_TRUMPET_OXIDIZED
+            Sounds.BLOCK_NOTE_BLOCK_PLING
     };
 
     private static List<SoundCandidate> availableSounds;
@@ -165,7 +161,7 @@ public final class NBSFileConverter {
 
             if (note.instrument() < header.defaultInstrumentCount()) {
                 if (note.instrument() >= VANILLA_SOUNDS.length)
-                    throw new IllegalArgumentException("Unsupported vanilla NBS instrument: " + note.instrument());
+                    throw new IllegalArgumentException("Unsupported vanilla NBS instrument: " + note.instrument() + ". This song likely uses instruments which didn't exist in this version.");
 
                 sound = VANILLA_SOUNDS[note.instrument()];
                 baseKey = 45;

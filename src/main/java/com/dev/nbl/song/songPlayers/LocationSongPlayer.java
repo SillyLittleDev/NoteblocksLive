@@ -113,7 +113,7 @@ public class LocationSongPlayer extends AbstractSongPlayer {
                 .runAtFixedRate(
                         plugin,
                         location,
-                        _ -> {
+                        task -> {
                             listeners.clear();
                             players.clear();
 

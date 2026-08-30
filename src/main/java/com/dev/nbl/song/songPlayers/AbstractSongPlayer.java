@@ -88,7 +88,7 @@ public abstract class AbstractSongPlayer {
 
             nowPlayingTask = Bukkit.getAsyncScheduler().runAtFixedRate(
                     NoteblocksLive.getInstance(),
-                    _ -> sendAudienceMessage(nowPlayingMessage),
+                    task -> sendAudienceMessage(nowPlayingMessage),
                     10,
                     1000,
                     TimeUnit.MILLISECONDS
@@ -125,7 +125,7 @@ public abstract class AbstractSongPlayer {
 
             songTask = Bukkit.getAsyncScheduler().runDelayed(
                     plugin,
-                    _ -> queueLookahead(generation),
+                    task -> queueLookahead(generation),
                     delayNs,
                     TimeUnit.NANOSECONDS
             );
