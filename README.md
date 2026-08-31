@@ -22,6 +22,11 @@ This plugin allows for the playing of Midi, Noteblock Studio, and custom-made so
 
 #### A full breakdown of commands can be found [here](COMMANDS.md)
 
+### 🎥 Demos
+#### [Undertale - Asgore (NBS)](https://youtu.be/YYoaaH_EhkI)<br>
+#### [Deltarune - Cutie Mew Mew Magic (NBS)](https://youtu.be/HWhk8sB3kso)<br>
+#### [Deltarune - VS Susie (Midi)](https://youtu.be/w6Ktc_CcWRs)<br>
+#### [Deltarune - Petal Dance (Midi)](https://youtu.be/0G6jMth-lio)<br>
 
 ### 📬 Reporting issues
 To report bugs, ask for features, or seek help in other ways, feel free to join the [discord](https://discord.com/UPDATETHISLINK), or create an issue on the [github](https://github.com/SillyLittleDev/NoteblocksLive). <DONT FORGET TO MAKE A DISCORD BEFORE PUBLISHING YOU LAZY BUM><br>
