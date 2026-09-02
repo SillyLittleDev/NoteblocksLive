@@ -570,7 +570,7 @@ public class SongCommand {
                                                     double volume = context.getArgument("volume", Double.class);
                                                     float convertedVolume;
 
-                                                    if (volume > 1) convertedVolume = ((float) Math.clamp(volume, 0, 100)) / 100;
+                                                    if (volume > 1) convertedVolume = ((float) Math.max(volume, 0)) / 100;
                                                     else convertedVolume = (float) volume;
 
                                                     if (string.equalsIgnoreCase("all")) {
@@ -634,6 +634,15 @@ public class SongCommand {
                                                                     .append(Component.text(" set to ", NamedTextColor.WHITE))
                                                                     .append(Component.text(volumeString, NamedTextColor.GREEN))
                                                     );
+
+                                                    if (convertedVolume > 1) {
+                                                        context.getSource().getSender().sendMessage(
+                                                                Component.text("Warning: Volumes greater than 100% generally don't work in minecraft.", NamedTextColor.YELLOW)
+                                                        );
+                                                        context.getSource().getSender().sendMessage(
+                                                                Component.text("This will only increase the volume of notes less than full volume.", NamedTextColor.YELLOW)
+                                                        );
+                                                    }
 
                                                     return Command.SINGLE_SUCCESS;
                                                 })
