@@ -71,8 +71,20 @@ The custom instrument tools are only meant for very specific usage, and has unde
 Custom instruments allow for more advanced musical instruments in the game. While it adds the normal functionality of sounds with an extended range, it also supports things like held notes, allowing for sounds with dynamic lengths.<br>
 Learn more about how the custom instrument implementation works in [INSTRUMENTS.md](INSTRUMENTS.md)
 
-### ☐ Planned features
+### ☐ Planned features (potential)
  - Add music fading / transitions
  - Add a now playing display option which only shows at the start of each song.
  - Add more in depth playlists
  - Add pause and unpause
+ - Add a song player control to pitch a song up or down
+   - Make speed controls change pitch?
+ - Add song editing features
+   - Could include things like editing pitch, speed, or replacing instruments
+   - Have a mode to copy the song or edit the original
+   - Should save the file in the custom format for simplicity
+
+### ToDo
+ - Generalize more of the song player code
+   - Further split player types to remove unnecessary methods (i.e. add and remove player methods in single player players)
+ - Split the song player selection code into its own method in the song command.
+   - At the moment it is reused so many times, when each function does the same selection.

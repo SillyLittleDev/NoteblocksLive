@@ -4,6 +4,7 @@ import com.dev.nbl.listeners.RenameListener;
 import com.dev.nbl.song.songPlayers.*;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
+import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
@@ -647,6 +648,177 @@ public class SongCommand {
                                                     return Command.SINGLE_SUCCESS;
                                                 })
                                         )
+                                )
+                        )
+                        .then(Commands.literal("speed")
+                                .then(Commands.argument("target", StringArgumentType.string())
+                                        .suggests((context, builder) -> suggestSongPlayer(builder, context.getSource()))
+                                        .then(Commands.argument("speed", FloatArgumentType.floatArg())
+                                                .executes(context -> {
+                                                    String string = StringArgumentType.getString(context, "target");
+                                                    String name;
+
+                                                    float speed = context.getArgument("speed", Float.class);
+
+                                                    if (speed <= 0) {
+                                                        context.getSource().getSender().sendMessage(
+                                                                Component.text("Speed must be greater than 0.", NamedTextColor.RED)
+                                                        );
+                                                        return Command.SINGLE_SUCCESS;
+                                                    }
+
+                                                    if (string.equalsIgnoreCase("all")) {
+                                                        AbstractSongPlayer songPlayer = musicManager.getOtherPlayer("All-Listening");
+
+                                                        if (blockToolCall(context.getSource().getSender(), null)) return Command.SINGLE_SUCCESS;
+
+                                                        if (songPlayer == null) {
+                                                            context.getSource().getSender().sendMessage(
+                                                                    Component.text(
+                                                                            "All song player Not Found!",
+                                                                            NamedTextColor.RED
+                                                                    )
+                                                            );
+                                                            return Command.SINGLE_SUCCESS;
+                                                        }
+
+                                                        songPlayer.setSpeed(speed);
+
+                                                        name = "All";
+                                                    }
+
+                                                    else if (musicManager.getOtherPlayers().containsKey(string)) {
+                                                        AbstractSongPlayer songPlayer = musicManager.getOtherPlayers().get(string);
+
+                                                        if (blockToolCall(context.getSource().getSender(), songPlayer)) return Command.SINGLE_SUCCESS;
+
+                                                        songPlayer.setSpeed(speed);
+
+                                                        name = string;
+                                                    }
+
+                                                    else {
+                                                        Player target = Bukkit.getPlayer(string);
+
+                                                        if (target == null) {
+                                                            context.getSource().getSender().sendMessage(
+                                                                    Component.text(
+                                                                            "Player Not Found!",
+                                                                            NamedTextColor.RED
+                                                                    )
+                                                            );
+
+                                                            return Command.SINGLE_SUCCESS;
+                                                        }
+
+                                                        IndividualSongPlayer songPlayer = musicManager.getSongPlayer(target);
+
+                                                        if (blockToolCall(context.getSource().getSender(), songPlayer)) return Command.SINGLE_SUCCESS;
+
+                                                        songPlayer.setSpeed(speed);
+
+                                                        name = target.getName();
+                                                    }
+
+                                                    context.getSource().getSender().sendMessage(
+                                                            Component.text("Speed for song player ", NamedTextColor.WHITE)
+                                                                    .append(Component.text(name, NamedTextColor.GREEN))
+                                                                    .append(Component.text(" set to ", NamedTextColor.WHITE))
+                                                                    .append(Component.text(speed, NamedTextColor.GREEN))
+                                                    );
+
+                                                    return Command.SINGLE_SUCCESS;
+                                                })
+                                        )
+                                )
+                        )
+                        .then(Commands.literal("info")
+                                .then(Commands.argument("target", StringArgumentType.string())
+                                        .suggests((context, builder) -> suggestSongPlayer(builder, context.getSource()))
+                                        .executes(context -> {
+                                            String string = StringArgumentType.getString(context, "target");
+
+                                            String name;
+
+                                            AbstractSongPlayer songPlayer;
+
+                                            if (string.equalsIgnoreCase("all")) {
+                                                songPlayer = musicManager.getOtherPlayer("All-Listening");
+
+                                                if (blockToolCall(context.getSource().getSender(), null))
+                                                    return Command.SINGLE_SUCCESS;
+
+                                                name = "All";
+                                            } else if (musicManager.getOtherPlayers().containsKey(string)) {
+                                                songPlayer = musicManager.getOtherPlayers().get(string);
+
+                                                if (blockToolCall(context.getSource().getSender(), songPlayer))
+                                                    return Command.SINGLE_SUCCESS;
+
+                                                name = string;
+                                            } else {
+                                                Player target = Bukkit.getPlayer(string);
+
+                                                if (target == null) {
+                                                    context.getSource().getSender().sendMessage(
+                                                            Component.text(
+                                                                    "Player Not Found!",
+                                                                    NamedTextColor.RED
+                                                            )
+                                                    );
+
+                                                    return Command.SINGLE_SUCCESS;
+                                                }
+
+                                                songPlayer = musicManager.getSongPlayer(target);
+
+                                                if (blockToolCall(context.getSource().getSender(), songPlayer))
+                                                    return Command.SINGLE_SUCCESS;
+
+                                                name = target.getName();
+                                            }
+
+                                            if (songPlayer == null) {
+                                                context.getSource().getSender().sendMessage(
+                                                        Component.text("Song Player: ", NamedTextColor.WHITE)
+                                                                .append(Component.text(string, NamedTextColor.RED))
+                                                                .append(Component.text(" not found.", NamedTextColor.WHITE))
+                                                );
+
+                                                return Command.SINGLE_SUCCESS;
+                                            }
+
+                                            String songName = songPlayer.getSongName();
+
+                                            context.getSource().getSender().sendMessage(
+                                                    Component.text("Info for song player: ", NamedTextColor.WHITE)
+                                                            .append(Component.text(name, NamedTextColor.GREEN))
+                                            );
+                                            context.getSource().getSender().sendMessage(
+                                                    Component.text("Current Song: ", NamedTextColor.WHITE)
+                                                            .append(Component.text((songName == null) ? "none" : songName, NamedTextColor.GREEN))
+                                            );
+                                            context.getSource().getSender().sendMessage(
+                                                    Component.text("Volume: ", NamedTextColor.WHITE)
+                                                            .append(Component.text(songPlayer.getVolume() * 100 + "%", NamedTextColor.GREEN))
+                                            );
+                                            context.getSource().getSender().sendMessage(
+                                                    Component.text("Speed: ", NamedTextColor.WHITE)
+                                                            .append(Component.text(songPlayer.getSpeed(), NamedTextColor.GREEN))
+                                            );
+                                            context.getSource().getSender().sendMessage(
+                                                    Component.text("Loops: ", NamedTextColor.WHITE)
+                                                            .append(Component.text(songPlayer.getLoops(), NamedTextColor.GREEN))
+                                            );
+
+                                            context.getSource().getSender().sendMessage(Component.text("Queue:", NamedTextColor.WHITE));
+                                            for (String s : songPlayer.getQueue()) context.getSource().getSender().sendMessage(
+                                                    Component.text(" - ", NamedTextColor.YELLOW)
+                                                            .append(Component.text(s, NamedTextColor.GREEN))
+                                            );
+
+                                            return Command.SINGLE_SUCCESS;
+                                        })
                                 )
                         )
                 )
