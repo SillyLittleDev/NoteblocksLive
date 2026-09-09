@@ -88,6 +88,19 @@ For individual players, use the players username, otherwise, use the internal id
 This allows you to set the volume for a song player. Numbers from 1 to 100 will convert as percentages. Numbers from 0 to 1 will scale as well. As such, using 0.5 and 50 will both set the volume to 50%.<br>
 For individual players, use the players username, otherwise, use the internal identifier you set when creating the song player.
 
+### Speed
+```yml
+/songs controls speed <song player> <speed>
+```
+This allows you to control the speed at which songs play for a particular song player.
+1 is the default, higher values are faster, lower values are slower.
+
+### Info
+```yml
+/songs controls info <song player>
+```
+Gets the current control settings of a song player. Gives details like the current song playing, volume, speed, queue, and loops.
+
 ## System
 This sub command is used to control plugin wide settings. For the most part, it is suggested to leave this alone. These settings are mainly for testing.<br>
 The only settings I would ever suggest actually using are the ones which involve the now playing stuff.
