@@ -40,6 +40,7 @@ public final class NoteblocksLive extends JavaPlugin {
     public boolean enableCustomSounds = true;
     public boolean enableDefaultResourcePack = true;
     public boolean requireResourcePack = true;
+    public boolean normalizeSongVolume = true;
 
     private ResourcePackListener resourcePackListener;
 
@@ -109,6 +110,7 @@ public final class NoteblocksLive extends JavaPlugin {
         enableCustomSounds = getConfig().getBoolean("enable-custom-sounds", true);
         enableDefaultResourcePack = getConfig().getBoolean("use-default-pack-download", true);
         requireResourcePack = getConfig().getBoolean("require-resource-pack", true);
+        normalizeSongVolume = getConfig().getBoolean("normalize-song-volume", true);
 
         AbstractSongPlayer.defaultNowPlaying = getConfig().getBoolean("default-now-playing", true);
         AbstractSongPlayer.nowPlayingPrefix = MiniMessage.miniMessage().deserialize(getConfig().getString("now-playing.prefix", "<light_purple>♫ </light_purple>"));

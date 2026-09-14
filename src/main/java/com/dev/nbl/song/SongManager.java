@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -81,11 +82,12 @@ public class SongManager {
     public void load() {
         musicSheets.clear();
 
-
         File file = new File(NoteblocksLive.getInstance().getDataFolder(), "songs");
         if (!file.exists()) file.mkdir();
 
         loadFolder(file);
+
+        if (NoteblocksLive.getInstance().normalizeSongVolume) normalizeSongVolume();
     }
 
     private void loadFolder(File file) {
@@ -176,6 +178,34 @@ public class SongManager {
     private ArrayList<PreciseNotes.PacketPreciseNote> convertString(String data) {
         ArrayList<PreciseNotes.PreciseNoteData> noteData = PreciseNotes.parseNotes(data.split(" "));
         return PreciseNotes.convertPacketNotes(noteData);
+    }
+
+    private void normalizeSongVolume() {
+        for (Map.Entry<String, ArrayList<PreciseNotes.PacketPreciseNote>> entry : musicSheets.entrySet()) {
+            ArrayList<PreciseNotes.PacketPreciseNote> notes = entry.getValue();
+
+            if (notes == null || notes.isEmpty()) continue;
+
+            double maxVolume = 0.0;
+
+            for (PreciseNotes.PacketPreciseNote note : notes) maxVolume = Math.max(maxVolume, note.volume());
+
+            if (maxVolume <= 0.0 || maxVolume >= 1.0) continue;
+
+            double multiplier = 1.0 / maxVolume;
+
+            ArrayList<PreciseNotes.PacketPreciseNote> leveledNotes = new ArrayList<>(notes.size());
+
+            for (PreciseNotes.PacketPreciseNote note : notes)
+                leveledNotes.add(new PreciseNotes.PacketPreciseNote(
+                        note.sound(),
+                        note.pitch(),
+                        note.postPause(),
+                        note.volume() * multiplier));
+
+
+            entry.setValue(leveledNotes);
+        }
     }
 
     public Set<String> getSongNames() {
