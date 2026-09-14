@@ -847,6 +847,23 @@ public class SongCommand {
                                     return Command.SINGLE_SUCCESS;
                                 })
                         )
+                        .then(Commands.literal("toggle-normalized-volume")
+                                .executes(context -> {
+                                    musicManager.normalizeSongVolume = !musicManager.normalizeSongVolume;
+
+                                    songManager.load();
+
+                                    context.getSource().getSender().sendMessage(
+                                            Component.text("Normalized song volume is now: ", NamedTextColor.WHITE)
+                                                    .append(Component.text(
+                                                            (musicManager.normalizeSongVolume) ? "Enabled" : "Disabled",
+                                                            (musicManager.normalizeSongVolume) ? NamedTextColor.GREEN : NamedTextColor.RED
+                                                    ))
+                                    );
+
+                                    return Command.SINGLE_SUCCESS;
+                                })
+                        )
                         .then(Commands.literal("toggle-custom-sounds")
                                 .executes(context -> {
                                     musicManager.enableCustomSounds = !musicManager.enableCustomSounds;

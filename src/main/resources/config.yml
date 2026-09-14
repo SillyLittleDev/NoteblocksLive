@@ -10,6 +10,10 @@ use-default-pack-download: true
 # If the above default pack should be required. Ignored if use default pack is disabled.
 require-resource-pack: true
 
+# If song volume should be normalized. This means songs which are quiet should have their volume boosted to peak at a normal volume.
+# This will not impact quiet parts of song, only songs where the whole thing is less than full volume.
+normalize-song-volume: true
+
 # If now playing messages should be on by default.
 default-now-playing: true
 
