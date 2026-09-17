@@ -4,11 +4,11 @@
 This plugin allows for the playing of Midi, Noteblock Studio, and custom-made songs live using noteblock sounds. While it is fun to use for playing custom music, it is most useful as a tool for other projects to play music.
 
 ### 🚨 WARNING - (EARLY DEVELOPMENT)
-
-#### This plugin is in early development!! There are still many features planned, and there may be some bugs. I have done a lot of testing, but am only one person. Please report any bugs, and feel free to request features.
+**This plugin is in early development!! There are still many features planned, and there may be some bugs. I have done a lot of testing, but am only one person. Please report any bugs, and feel free to request features.**
 
 ### Requirements
-#### ⚠️ FOR BEST FUNCTIONALITY, A RESOURCE PACK IS REQUIRED. BY DEFAULT THIS WILL BE PUT IN THE PLUGINS FOLDER, AND LOADED FOR PLAYERS FROM GITHUB. MANY SONGS WONT SOUND RIGHT WITHOUT IT.
+#### ⚠️ RESOURCE PACK USAGE
+**FOR BEST FUNCTIONALITY, A RESOURCE PACK IS REQUIRED. BY DEFAULT THIS WILL BE PUT IN THE PLUGINS FOLDER, AND LOADED FOR PLAYERS FROM GITHUB. MANY SONGS WONT SOUND RIGHT WITHOUT IT.**
 
 ### ✅ Features and utility
  - Play custom songs live in game
@@ -23,10 +23,10 @@ This plugin allows for the playing of Midi, Noteblock Studio, and custom-made so
 #### A full breakdown of commands can be found [here](COMMANDS.md)
 
 ### 🎥 Demos
-#### [Undertale - Asgore (NBS)](https://youtu.be/YYoaaH_EhkI)<br>
-#### [Deltarune - Cutie Mew Mew Magic (NBS)](https://youtu.be/HWhk8sB3kso)<br>
-#### [Deltarune - VS Susie (Midi)](https://youtu.be/w6Ktc_CcWRs)<br>
-#### [Deltarune - Petal Dance (Midi)](https://youtu.be/0G6jMth-lio)<br>
+**[Undertale - Asgore (NBS)](https://youtu.be/YYoaaH_EhkI)**<br>
+**[Deltarune - Cutie Mew Mew Magic (NBS)](https://youtu.be/HWhk8sB3kso)**<br>
+**[Deltarune - VS Susie (Midi)](https://youtu.be/w6Ktc_CcWRs)**<br>
+**[Deltarune - Petal Dance (Midi)](https://youtu.be/0G6jMth-lio)**<br>
 
 ### 📬 Reporting issues
 To report bugs, ask for features, or seek help in other ways, feel free to join the [discord](https://discord.com/UPDATETHISLINK), or create an issue on the [github](https://github.com/SillyLittleDev/NoteblocksLive). <DONT FORGET TO MAKE A DISCORD BEFORE PUBLISHING YOU LAZY BUM><br>
@@ -46,13 +46,13 @@ or<br>
 [instrument];[octave];[tone];[sharp];[postPause]<br>
 The last semicolon along with volume is optional, and will by default play at full volume.
 
- - The instrument is just the instrument name in game.
- - The octave is measured as a shift from the default. An octave above normal is 1, an octave below is -1.
- - Tone is the letter tone of the note.
- - This is a single letter for if the note is sharp or not. s for sharp, and f (or any other letter) for not sharp.
- - The post pause is the time in nanoseconds until the next note.
+- The instrument is just the instrument name in game.
+- The octave is measured as a shift from the default. An octave above normal is 1, an octave below is -1.
+- Tone is the letter tone of the note.
+- This is a single letter for if the note is sharp or not. s for sharp, and f (or any other letter) for not sharp.
+- The post pause is the time in nanoseconds until the next note.
    - 2 notes played at the same time will have a 0 as the post pause for the first note listed, and the pause for the second one being the time to the next note.
- - Volume is a number from 0 to 1 denoting volume. 1 is full volume, 0 is off. 
+- Volume is a number from 0 to 1 denoting volume. 1 is full volume, 0 is off.
 
 Example - An A note on the harp: harp;0;a;f;0<br>
 Example - An A note on the harp at half volume: harp;0;a;f;0;0.5
@@ -66,7 +66,7 @@ Using sound keys for minecraft, or other sounds in a resource pack cannot use th
 Custom instruments are supported. Custom sounds can be used, as shown above, but custom instrument implementation can also be used.<br>
 The custom instrument tools are only meant for very specific usage, and has undergone far less testing than everything else. It is suggested to just use the above full sound name setup in songs.
 
-##### WARNING: THE CUSTOM INSTRUMENT SYSTEM WAS MADE AS A TEST. IT IS UNDER TESTED, LIKELY PRONE TO ISSUES, AND MAY HAVE ISSUES. PLEASE EXPECT ISSUES. PLEASE REACH OUT WITH ANY BUGS.
+**WARNING: THE CUSTOM INSTRUMENT SYSTEM WAS MADE AS A TEST. IT IS UNDER TESTED, LIKELY PRONE TO BUGS AND OTHER ISSUES. PLEASE REACH OUT WITH ANY PROBLEMS.**
 
 Custom instruments allow for more advanced musical instruments in the game. While it adds the normal functionality of sounds with an extended range, it also supports things like held notes, allowing for sounds with dynamic lengths.<br>
 Learn more about how the custom instrument implementation works in [INSTRUMENTS.md](INSTRUMENTS.md)
