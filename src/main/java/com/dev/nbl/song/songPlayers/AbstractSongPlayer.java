@@ -143,7 +143,7 @@ public abstract class AbstractSongPlayer {
         if (delayNs == 0L) {
             Bukkit.getAsyncScheduler().runNow(
                     plugin,
-                    _ -> playQueuedGroup(generation, group)
+                    task -> playQueuedGroup(generation, group)
             );
             return;
         }
