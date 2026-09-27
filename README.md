@@ -3,14 +3,15 @@
 
 This plugin allows for the playing of Midi, Noteblock Studio, and custom-made songs live using noteblock sounds. While it is fun to use for playing custom music, it is most useful as a tool for other projects to play music.
 
-### 🚨 WARNING - (EARLY DEVELOPMENT)
+## 🚨 WARNING - (EARLY DEVELOPMENT)
 **This plugin is in early development!! There are still many features planned, and there may be some bugs. I have done a lot of testing, but am only one person. Please report any bugs, and feel free to request features.**
 
-### Requirements
+## Requirements
 #### ⚠️ RESOURCE PACK USAGE
 **FOR BEST FUNCTIONALITY, A RESOURCE PACK IS REQUIRED. BY DEFAULT THIS WILL BE PUT IN THE PLUGINS FOLDER, AND LOADED FOR PLAYERS FROM GITHUB. MANY SONGS WONT SOUND RIGHT WITHOUT IT.**
+The pack loading can be disabled in the config if you would prefer not to use it, or want to integrate it into your own pack separately.
 
-### ✅ Features and utility
+## ✅ Features and utility
  - Play custom songs live in game
  - Add songs to the /MCMidi/songs folder
  - Songs can be nbs or midi files, and if you have a custom song made for the plugin, can use YML or TXT files.
@@ -22,17 +23,17 @@ This plugin allows for the playing of Midi, Noteblock Studio, and custom-made so
 
 #### A full breakdown of commands can be found [here](COMMANDS.md)
 
-### 🎥 Demos
+## 🎥 Demos
 **[Undertale - Asgore (NBS)](https://youtu.be/YYoaaH_EhkI)**<br>
 **[Deltarune - Cutie Mew Mew Magic (NBS)](https://youtu.be/HWhk8sB3kso)**<br>
 **[Deltarune - VS Susie (Midi)](https://youtu.be/w6Ktc_CcWRs)**<br>
 **[Deltarune - Petal Dance (Midi)](https://youtu.be/0G6jMth-lio)**<br>
 
-### 📬 Reporting issues
-To report bugs, ask for features, or seek help in other ways, feel free to join the [discord](https://discord.com/UPDATETHISLINK), or create an issue on the [github](https://github.com/SillyLittleDev/NoteblocksLive). <DONT FORGET TO MAKE A DISCORD BEFORE PUBLISHING YOU LAZY BUM><br>
+## 📬 Reporting issues
+To report bugs, ask for features, or seek help in other ways, feel free to join the [discord](https://discord.gg/GARaUtyH67), or create an issue on the [github](https://github.com/SillyLittleDev/NoteblocksLive). <br>
 Also, development of this plugin has been spread out over long periods of time. As such, some explanations may have mistakes, or be less than would be hoped for. Please reach out with any issues or gaps in any of the docs made for this plugin.
 
-### 📁 Currently supported file formats
+## 📁 Currently supported file formats
  - Midi
  - NBS - NBS songs marked as noteblock compatible will work with the resource pack disabled. Otherwise, the resource pack will be needed to function.
  - YML - Uses the custom music format below. Each entry will be read as a string, with the location being the name of the song.
