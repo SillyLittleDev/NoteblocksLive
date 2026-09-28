@@ -851,6 +851,9 @@ public class SongCommand {
                                 .executes(context -> {
                                     musicManager.normalizeSongVolume = !musicManager.normalizeSongVolume;
 
+                                    musicManager.getConfig().set("normalize-song-volume", musicManager.normalizeSongVolume);
+                                    musicManager.saveConfig();
+
                                     songManager.load();
 
                                     context.getSource().getSender().sendMessage(
