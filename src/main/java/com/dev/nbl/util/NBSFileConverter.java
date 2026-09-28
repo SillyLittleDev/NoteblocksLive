@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.logging.Level;
 
 public final class NBSFileConverter {
     private static final Charset NBS_CHARSET = Charset.forName("windows-1252");
@@ -87,32 +88,38 @@ public final class NBSFileConverter {
         ArrayList<TimedNote> timedNotes = new ArrayList<>(rawNotes.size());
 
         for (RawNote note : rawNotes) {
-            Sound sound;
-            int baseKey;
+            try {
+                Sound sound;
+                int baseKey;
 
-            if (note.instrument() < header.defaultInstrumentCount()) {
-                if (note.instrument() >= VANILLA_SOUNDS.length)
-                    throw new IllegalArgumentException("Unsupported vanilla NBS instrument: " + note.instrument());
+                if (note.instrument() < header.defaultInstrumentCount()) {
+                    if (note.instrument() >= VANILLA_SOUNDS.length)
+                        throw new IllegalArgumentException("Unsupported vanilla NBS instrument: " + note.instrument());
 
-                sound = VANILLA_SOUNDS[note.instrument()];
-                baseKey = 45;
-            } else {
-                int customIndex = note.instrument() - header.defaultInstrumentCount();
+                    sound = VANILLA_SOUNDS[note.instrument()];
+                    baseKey = 45;
+                } else {
+                    int customIndex = note.instrument() - header.defaultInstrumentCount();
 
-                if (customIndex >= customInstruments.size())
-                    throw new IllegalArgumentException("Invalid custom NBS instrument index: " + customIndex);
+                    if (customIndex >= customInstruments.size())
+                        throw new IllegalArgumentException("Invalid custom NBS instrument index: " + customIndex);
 
-                NBSInstrument instrument = customInstruments.get(customIndex);
+                    NBSInstrument instrument = customInstruments.get(customIndex);
 
-                sound = instrument.sound();
-                baseKey = instrument.soundKey();
+                    sound = instrument.sound();
+                    baseKey = instrument.soundKey();
+                }
+
+                float pitch = (float) Math.pow(2.0, (((note.key() - baseKey) * 100.0) + note.pitchCents()) / 1200.0);
+                double volume = (layerVolumes[note.layer()] * note.velocity()) / 10000.0;
+                long timestamp = Math.round((note.tick() * 1000000000.0) / header.tempo());
+
+                timedNotes.add(new TimedNote(timestamp, note.layer(), sound, pitch, volume));
+            } catch (NullPointerException ignored) {
+            } catch (Exception e) {
+                NoteblocksLive.getInstance().getLogger().log(Level.WARNING, "Error reading NBS instrument: " + note.instrument(), e);
+                NoteblocksLive.getInstance().getLogger().info("Skipping the problematic note. The song may not sound right.");
             }
-
-            float pitch = (float) Math.pow(2.0, (((note.key() - baseKey) * 100.0) + note.pitchCents()) / 1200.0);
-            double volume = (layerVolumes[note.layer()] * note.velocity()) / 10000.0;
-            long timestamp = Math.round((note.tick() * 1000000000.0) / header.tempo());
-
-            timedNotes.add(new TimedNote(timestamp, note.layer(), sound, pitch, volume));
         }
 
         timedNotes.sort(Comparator.comparingLong(TimedNote::timestamp).thenComparingInt(TimedNote::layer));
@@ -158,77 +165,82 @@ public final class NBSFileConverter {
         ArrayList<TimedPreciseNoteData> timedNotes = new ArrayList<>(rawNotes.size());
 
         for (RawNote note : rawNotes) {
-            Sound sound;
-            CustomInstrumentSoundSet extendedCustom = null;
-            boolean custom;
-            int baseKey;
+            try {
+                Sound sound;
+                CustomInstrumentSoundSet extendedCustom = null;
+                boolean custom;
+                int baseKey;
 
-            if (note.instrument() < header.defaultInstrumentCount()) {
-                if (note.instrument() >= VANILLA_SOUNDS.length)
-                    throw new IllegalArgumentException("Unsupported vanilla NBS instrument: " + note.instrument());
+                if (note.instrument() < header.defaultInstrumentCount()) {
+                    if (note.instrument() >= VANILLA_SOUNDS.length)
+                        throw new IllegalArgumentException("Unsupported vanilla NBS instrument: " + note.instrument());
 
-                sound = VANILLA_SOUNDS[note.instrument()];
-                baseKey = 45;
-                custom = false;
-            } else {
-                int customIndex = note.instrument() - header.defaultInstrumentCount();
+                    sound = VANILLA_SOUNDS[note.instrument()];
+                    baseKey = 45;
+                    custom = false;
+                } else {
+                    int customIndex = note.instrument() - header.defaultInstrumentCount();
 
-                if (customIndex >= customInstruments.size())
-                    throw new IllegalArgumentException("Invalid custom NBS instrument index: " + customIndex);
+                    if (customIndex >= customInstruments.size())
+                        throw new IllegalArgumentException("Invalid custom NBS instrument index: " + customIndex);
 
-                NBSInstrument instrument = customInstruments.get(customIndex);
+                    NBSInstrument instrument = customInstruments.get(customIndex);
 
-                sound = instrument.sound();
-                extendedCustom = instrument.extendedCustom();
-                baseKey = instrument.soundKey();
-                custom = true;
-            }
-
-            int shift = (int) Math.round((((note.key() - baseKey) * 100.0) + note.pitchCents()) / 100.0);
-            int noteIndex = 6 + shift;
-            int octave = Math.floorDiv(noteIndex, 12);
-            int pitchClass = Math.floorMod(noteIndex, 12);
-
-            char tone = switch (pitchClass) {
-                case 0, 1 -> 'C';
-                case 2, 3 -> 'D';
-                case 4 -> 'E';
-                case 5, 6 -> 'F';
-                case 7, 8 -> 'G';
-                case 9, 10 -> 'A';
-                case 11 -> 'B';
-                default -> throw new IllegalStateException("Invalid pitch class: " + pitchClass);
-            };
-
-            boolean sharp = switch (pitchClass) {
-                case 1, 3, 6, 8, 10 -> true;
-                default -> false;
-            };
-
-            String soundKey;
-
-            if (extendedCustom != null) {
-                CustomInstrumentSoundSet.Part part = extendedCustom.looping()
-                        ? CustomInstrumentSoundSet.Part.ATTACK
-                        : CustomInstrumentSoundSet.Part.SOUND;
-
-                soundKey = SoundKeyResolver.getSoundKey(extendedCustom.token(part), octave, tone, sharp);
-            } else {
-                String rawSoundKey = sound.getName().toString();
-                String croppedSoundKey = rawSoundKey.substring(rawSoundKey.lastIndexOf('.') + 1);
-
-                if (!custom) {
-                    if (ignoreExtended) soundKey = croppedSoundKey;
-                    else soundKey = SoundKeyResolver.getSoundKey(croppedSoundKey, octave, tone, sharp);
+                    sound = instrument.sound();
+                    extendedCustom = instrument.extendedCustom();
+                    baseKey = instrument.soundKey();
+                    custom = true;
                 }
-                else soundKey = rawSoundKey;
+
+                int shift = (int) Math.round((((note.key() - baseKey) * 100.0) + note.pitchCents()) / 100.0);
+                int noteIndex = 6 + shift;
+                int octave = Math.floorDiv(noteIndex, 12);
+                int pitchClass = Math.floorMod(noteIndex, 12);
+
+                char tone = switch (pitchClass) {
+                    case 0, 1 -> 'C';
+                    case 2, 3 -> 'D';
+                    case 4 -> 'E';
+                    case 5, 6 -> 'F';
+                    case 7, 8 -> 'G';
+                    case 9, 10 -> 'A';
+                    case 11 -> 'B';
+                    default -> throw new IllegalStateException("Invalid pitch class: " + pitchClass);
+                };
+
+                boolean sharp = switch (pitchClass) {
+                    case 1, 3, 6, 8, 10 -> true;
+                    default -> false;
+                };
+
+                String soundKey;
+
+                if (extendedCustom != null) {
+                    CustomInstrumentSoundSet.Part part = extendedCustom.looping()
+                            ? CustomInstrumentSoundSet.Part.ATTACK
+                            : CustomInstrumentSoundSet.Part.SOUND;
+
+                    soundKey = SoundKeyResolver.getSoundKey(extendedCustom.token(part), octave, tone, sharp);
+                } else {
+                    String rawSoundKey = sound.getName().toString();
+                    String croppedSoundKey = rawSoundKey.substring(rawSoundKey.lastIndexOf('.') + 1);
+
+                    if (!custom) {
+                        if (ignoreExtended) soundKey = croppedSoundKey;
+                        else soundKey = SoundKeyResolver.getSoundKey(croppedSoundKey, octave, tone, sharp);
+                    } else soundKey = rawSoundKey;
+                }
+
+                int newOctave = (!ignoreExtended) ? SoundKeyResolver.calculateNewOctave(octave, tone, sharp) : octave;
+                double volume = (layerVolumes[note.layer()] * note.velocity()) / 10000.0;
+                long timestamp = Math.round((note.tick() * 1000000000.0) / header.tempo());
+
+                timedNotes.add(new TimedPreciseNoteData(timestamp, note.layer(), soundKey, newOctave, tone, sharp, volume));
+            } catch (NullPointerException ignored) {
+            } catch (Exception e) {
+                NoteblocksLive.getInstance().getLogger().log(Level.WARNING, "Error reading NBS instrument: " + note.instrument(), e);
+                NoteblocksLive.getInstance().getLogger().info("Skipping the problematic note. The song may not sound right.");
             }
-
-            int newOctave = (!ignoreExtended) ? SoundKeyResolver.calculateNewOctave(octave, tone, sharp) : octave;
-            double volume = (layerVolumes[note.layer()] * note.velocity()) / 10000.0;
-            long timestamp = Math.round((note.tick() * 1000000000.0) / header.tempo());
-
-            timedNotes.add(new TimedPreciseNoteData(timestamp, note.layer(), soundKey, newOctave, tone, sharp, volume));
         }
 
         timedNotes.sort(Comparator.comparingLong(TimedPreciseNoteData::timestamp).thenComparingInt(TimedPreciseNoteData::layer));
@@ -279,8 +291,13 @@ public final class NBSFileConverter {
 
             reader.readUnsignedByte();
 
-            ResolvedCustomSound resolved = resolveCustomSound(name, soundFile, includeExtendedCustom);
-            instruments.add(new NBSInstrument(resolved.sound(), resolved.extendedCustom(), soundKey));
+            try {
+                ResolvedCustomSound resolved = resolveCustomSound(name, soundFile, includeExtendedCustom);
+                instruments.add(new NBSInstrument(resolved.sound(), resolved.extendedCustom(), soundKey));
+            } catch (IllegalArgumentException e) {
+                NoteblocksLive.getInstance().getLogger().severe(e.getMessage());
+                instruments.add(new NBSInstrument(null, null, soundKey));
+            }
         }
 
         return instruments;
