@@ -4,7 +4,7 @@ These instruments allow for custom sounds to be associated with individual speci
 Custom instruments expect to have shifted versions of the audio. This is versions of the sound moved up and down octaves to help it function well with Minecraft's limited sound engine. While it is recommended to have all 6 shifts, you only actually need to have ones which will be used by the music you play.<br>
 
 ## Wording
-I am not a musician. I am not super familiar with most musical concepts. I learned music theory, midi formats, and other concepts for the purpose of making this plugin. As such, some of the ways I refer to things may be irregular (honestly, I haven't got the slightest clue).<br>
+I am not a musician. I am not super familiar with most musical concepts. I learned only the slightest fundamentals music theory, midi formats, and other concepts for the purpose of making this plugin. As such, some of the ways I refer to things may be irregular (honestly, I haven't got the slightest clue).<br>
 So for the purpose of clarity, I will explain what I mean with some of the things I say here.<br>
 
 #### Held notes / looping audios
