@@ -29,6 +29,13 @@ The pack loading can be disabled in the config if you would prefer not to use it
 **[Deltarune - VS Susie (Midi)](https://youtu.be/w6Ktc_CcWRs)**<br>
 **[Deltarune - Petal Dance (Midi)](https://youtu.be/0G6jMth-lio)**<br>
 
+## 🎵 Finding Songs
+Usually when I am looking for a song, my go to is to use an NBS song, as they are made with minecraft noteblocks. The best place I have found for these is https://noteblock.world/ <br>
+
+You can also find many Midi songs at https://onlinesequencer.net/sequences <br>
+
+While I suggest NBS, there are a lot more Midi renditions of songs out there, so sometimes it is the only option.
+
 ## 📬 Reporting issues
 To report bugs, ask for features, or seek help in other ways, feel free to join the [discord](https://discord.gg/GARaUtyH67), or create an issue on the [github](https://github.com/SillyLittleDev/NoteblocksLive). <br>
 Also, development of this plugin has been spread out over long periods of time. As such, some explanations may have mistakes, or be less than would be hoped for. Please reach out with any issues or gaps in any of the docs made for this plugin.
@@ -83,6 +90,8 @@ Learn more about how the custom instrument implementation works in [INSTRUMENTS.
    - Could include things like editing pitch, speed, or replacing instruments
    - Have a mode to copy the song or edit the original
    - Should save the file in the custom format for simplicity
+ - Add an in-game download feature
+   - Allow players to use a link or other method to pull songs and load them
 
 ### ToDo
  - Generalize more of the song player code
