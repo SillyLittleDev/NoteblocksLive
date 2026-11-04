@@ -98,3 +98,5 @@ Learn more about how the custom instrument implementation works in [INSTRUMENTS.
    - Further split player types to remove unnecessary methods (i.e. add and remove player methods in single player players)
  - Split the song player selection code into its own method in the song command.
    - At the moment it is reused so many times, when each function does the same selection.
+ - Add a Synchronized multi location player
+   - Used to have multiple synchronized location players for a system like a radio.

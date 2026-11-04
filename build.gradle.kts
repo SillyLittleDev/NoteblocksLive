@@ -12,8 +12,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:26.2.build.+")
-    implementation("com.github.retrooper:packetevents-spigot:2.13.0")
+    compileOnly("io.papermc.paper:paper-api:26.3.build.+")
+    implementation("com.github.retrooper:packetevents-spigot:2.14.0")
     implementation("com.google.code.gson:gson:2.11.0")
 }
 
@@ -57,7 +57,7 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("26.2")
+        minecraftVersion("26.3")
         jvmArgs("-Xms2G", "-Xmx2G")
     }
 }
