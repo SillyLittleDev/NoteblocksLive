@@ -2,7 +2,7 @@ name: NoteblocksLive
 version: '${version}'
 
 main: com.dev.nbl.NoteblocksLive
-api-version: '26.2'
+api-version: '26.3'
 load: POSTWORLD
 folia-supported: true
 

@@ -100,3 +100,4 @@ Learn more about how the custom instrument implementation works in [INSTRUMENTS.
    - At the moment it is reused so many times, when each function does the same selection.
  - Add a Synchronized multi location player
    - Used to have multiple synchronized location players for a system like a radio.
+ - Now playing not showing in all playing thing
