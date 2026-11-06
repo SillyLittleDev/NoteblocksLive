@@ -28,7 +28,7 @@ public class AudienceSongPlayer extends AbstractSongPlayer {
     private final String name;
 
     public AudienceSongPlayer(String name, Player... players) {
-        for (Player player : players) audience.put(player.getUniqueId(), new PacketAudienceMember(packetEvents.getUser(player), player.getEntityId()));
+        for (Player player : players) addPlayer(player);
 
         this.name = name;
 
@@ -37,6 +37,7 @@ public class AudienceSongPlayer extends AbstractSongPlayer {
 
     public void addPlayer(Player player) {
         audience.put(player.getUniqueId(), new PacketAudienceMember(packetEvents.getUser(player), player.getEntityId()));
+        players.add(player);
     }
 
     public void removePlayer(Player player) {
