@@ -4,7 +4,7 @@ import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.manager.player.PlayerManager;
 import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.protocol.sound.SoundCategory;
-import com.github.retrooper.packetevents.util.Vector3i;
+import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSoundEffect;
 import com.dev.nbl.NoteblocksLive;
 import com.dev.nbl.util.PreciseNotes;
@@ -16,7 +16,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,12 +26,12 @@ public class LocationSongPlayer extends AbstractSongPlayer {
     private final PlayerManager manager;
 
     private final Location location;
-    private final Vector3i position;
+    private final Vector3d position;
     private final double radius;
     private final String name;
 
     private ConcurrentMap<UUID, User> listeners = new ConcurrentHashMap<>();
-    private Set<Player> players = ConcurrentHashMap.newKeySet();
+    private final Set<Player> players = ConcurrentHashMap.newKeySet();
 
     private ScheduledTask audienceTask;
 
@@ -42,10 +41,10 @@ public class LocationSongPlayer extends AbstractSongPlayer {
         this.name = name;
         manager = PacketEvents.getAPI().getPlayerManager();
 
-        this.position = new Vector3i(
-                (int) Math.floor(location.getX() * 8.0),
-                (int) Math.floor(location.getY() * 8.0),
-                (int) Math.floor(location.getZ() * 8.0)
+        this.position = new Vector3d(
+                location.getX(),
+                location.getY(),
+                location.getZ()
         );
 
         NoteblocksLive.getInstance().addSongPlayer(this, name);
