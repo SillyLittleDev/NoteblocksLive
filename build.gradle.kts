@@ -2,6 +2,7 @@ plugins {
     id("java-library")
     id("xyz.jpenilla.run-paper") version "3.0.2"
     id("com.gradleup.shadow") version "9.3.1"
+    id("maven-publish")
 }
 
 repositories {
@@ -59,5 +60,17 @@ tasks {
     runServer {
         minecraftVersion("26.3")
         jvmArgs("-Xms2G", "-Xmx2G")
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = System.getenv("GROUP") ?: project.group.toString()
+            artifactId = "NoteblocksLive"
+            version = System.getenv("VERSION") ?: project.version.toString()
+
+            from(components["shadow"])
+        }
     }
 }

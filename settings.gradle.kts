@@ -1,1 +1,1 @@
-rootProject.name = "MCMidi"
+rootProject.name = "NoteblocksLive"
