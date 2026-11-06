@@ -360,7 +360,7 @@ public abstract class AbstractSongPlayer {
     public void setNowPlaying(boolean nowPlayingMessage, boolean stopCurrentTask) {
         this.nowPlayingMessage = nowPlayingMessage;
 
-        if (!stopCurrentTask) return;
+        if (!stopCurrentTask || nowPlayingTask == null) return;
 
         nowPlayingTask.cancel();
         nowPlayingTask = null;

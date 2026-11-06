@@ -211,7 +211,7 @@ public class SongCommand {
                                                         return Command.SINGLE_SUCCESS;
                                                     }
 
-                                                    LocationSongPlayer lsPlayer = new LocationSongPlayer(player.getLocation(), 30, name);
+                                                    LocationSongPlayer lsPlayer = new LocationSongPlayer(player.getLocation(), 16, name);
                                                     lsPlayer.startSong(notes, song);
 
                                                     player.sendMessage(
