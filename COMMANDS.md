@@ -167,6 +167,14 @@ This is used to get information about a song. Currently, this only outputs the n
 This allows you to rename a song. It will rename it in commands, and also rename the file.<br>
 After sending this command, you will have 15 seconds to send the new song name. The new song name should just be sent as a normal chat message.
 
+### Download
+```yml
+/songs utility download <source> <optional song name>
+```
+This allows you to download a song from a few select website sources. This currently only includes [noteblock.world](https://noteblock.world/).
+Unnamed songs will default to the name song. If using a song link, the link needs to be in quotes.
+The source is either a link to the song, or the song ID from the website. Website support may be expanded if there is demand for it.
+
 
 ## Reload
 ```yml

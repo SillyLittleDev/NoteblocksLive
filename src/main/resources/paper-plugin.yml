@@ -32,7 +32,7 @@ permissions:
     default: op
 
   songs.utility:
-    description: Allows users to use utility tools like song conversion and rename.
+    description: Allows users to use utility tools like song conversion, download, and rename.
     default: op
 
   songs.system:

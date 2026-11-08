@@ -2,6 +2,8 @@ package com.dev.nbl.commands;
 
 import com.dev.nbl.listeners.RenameListener;
 import com.dev.nbl.song.songPlayers.*;
+import com.dev.nbl.util.*;
+import com.dev.nbl.util.downloading.SongDownloader;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.FloatArgumentType;
@@ -11,10 +13,6 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.dev.nbl.NoteblocksLive;
 import com.dev.nbl.listeners.PlayerLeaveJoinListener;
 import com.dev.nbl.song.SongManager;
-import com.dev.nbl.util.MidiFileConverter;
-import com.dev.nbl.util.NBSFileConverter;
-import com.dev.nbl.util.PreciseNotes;
-import com.dev.nbl.util.SoundKeyResolver;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
@@ -27,11 +25,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.eclipse.sisu.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
 
 public class SongCommand {
     private final SongManager songManager;
@@ -1089,6 +1089,27 @@ public class SongCommand {
                                         })
                                 )
                         )
+                        .then(Commands.literal("download")
+                                .then(Commands.argument("source", StringArgumentType.string())
+                                        .then(Commands.argument("name", StringArgumentType.greedyString())
+                                                .executes(context -> {
+                                                    String source = StringArgumentType.getString(context, "source");
+                                                    String name = StringArgumentType.getString(context, "name");
+
+                                                    handleDownload(context.getSource().getSender(), source, name);
+
+                                                    return Command.SINGLE_SUCCESS;
+                                                })
+                                        )
+                                        .executes(context -> {
+                                            String source = StringArgumentType.getString(context, "source");
+
+                                            handleDownload(context.getSource().getSender(), source, null);
+
+                                            return Command.SINGLE_SUCCESS;
+                                        })
+                                )
+                        )
                 )
                 .build();
 
@@ -1097,6 +1118,27 @@ public class SongCommand {
                 "Used to play and manage songs.",
                 List.of("noteblockslive", "nbl")
         );
+    }
+
+    private void handleDownload(CommandSender sender, String source, @Nullable String name) {
+        sender.sendMessage(
+                Component.text("Downloading song...", NamedTextColor.YELLOW, TextDecoration.ITALIC)
+        );
+
+        SongDownloader.download(source, new File(musicManager.getDataFolder(), "songs"), name).whenComplete((path, throwable) -> {
+            if (throwable != null) {
+                sender.sendMessage(Component.text("Error while downloading song: " + throwable.getMessage(), NamedTextColor.RED));
+                musicManager.getLogger().log(Level.SEVERE, "Error while downloading song: " + throwable.getMessage(), throwable);
+                return;
+            }
+
+            sender.sendMessage(
+                    Component.text("Song downloaded to: ", NamedTextColor.WHITE)
+                            .append(Component.text(path.toString(), NamedTextColor.GREEN))
+            );
+
+            musicManager.reload();
+        });
     }
 
     private void toggleNowPlayingMessage(CommandSender sender) {
