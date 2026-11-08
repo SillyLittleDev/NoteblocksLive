@@ -17,6 +17,7 @@ The pack loading can be disabled in the config if you would prefer not to use it
  - Songs can be nbs or midi files, and if you have a custom song made for the plugin, can use YML or TXT files.
  - Songs can be in folders, the plugin will still be able to read them.
  - Use /songs reload to update the songs loaded on the server.
+ - Use /songs utility download to download songs from the noteblock.world website.
  - Songs can be played from an entity, from a location, or directly to players.
  - Songs can be queued, looped, and skipped.
  - Each song player can have its volume updated individually.
@@ -31,6 +32,7 @@ The pack loading can be disabled in the config if you would prefer not to use it
 
 ## 🎵 Finding Songs
 Usually when I am looking for a song, my go to is to use an NBS song, as they are made with minecraft noteblocks. The best place I have found for these is https://noteblock.world/ <br>
+Songs can also be downloaded on any version newer than 0.1.3 in-game from noteblock.world using a command either using a link, or the song id. <br>
 
 You can also find many Midi songs at https://onlinesequencer.net/sequences <br>
 
@@ -90,8 +92,7 @@ Learn more about how the custom instrument implementation works in [INSTRUMENTS.
    - Could include things like editing pitch, speed, or replacing instruments
    - Have a mode to copy the song or edit the original
    - Should save the file in the custom format for simplicity
- - Add an in-game download feature
-   - Allow players to use a link or other method to pull songs and load them
+ - Add support for more websites to in-game downloading
 
 ### ToDo
  - Generalize more of the song player code
