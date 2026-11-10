@@ -27,7 +27,8 @@ public class LocationSongPlayer extends AbstractSongPlayer {
 
     private final Location location;
     private final Vector3d position;
-    private final double radius;
+    private final double baseRadius;
+    private double radius;
     private final String name;
 
     private ConcurrentMap<UUID, User> listeners = new ConcurrentHashMap<>();
@@ -38,6 +39,7 @@ public class LocationSongPlayer extends AbstractSongPlayer {
     public LocationSongPlayer(Location location, double radius, String name) {
         this.location = location;
         this.radius = radius;
+        this.baseRadius = radius;
         this.name = name;
         manager = PacketEvents.getAPI().getPlayerManager();
 
@@ -71,6 +73,12 @@ public class LocationSongPlayer extends AbstractSongPlayer {
 
         Player p = Bukkit.getPlayer(player);
         players.remove(p);
+    }
+
+    @Override
+    protected void updateVolume() {
+        if (volume <= 1) radius = baseRadius;
+        else radius = baseRadius * volume;
     }
 
     public void stopSong() {

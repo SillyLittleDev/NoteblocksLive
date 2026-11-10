@@ -27,7 +27,8 @@ public class MultiLocationSongPlayer extends AbstractSongPlayer {
     private final PlayerManager manager;
 
     private final ConcurrentHashMap<Location, Vector3d> locations = new ConcurrentHashMap<>();
-    private final double radius;
+    private final double baseRadius;
+    private double radius;
     private final String name;
 
     private ConcurrentHashMap<Location, ConcurrentMap<UUID, User>> listeners = new ConcurrentHashMap<>();
@@ -37,6 +38,7 @@ public class MultiLocationSongPlayer extends AbstractSongPlayer {
 
     public MultiLocationSongPlayer(ArrayList<Location> locations, double radius, String name) {
         this.radius = radius;
+        this.baseRadius = radius;
         this.name = name;
         manager = PacketEvents.getAPI().getPlayerManager();
 
@@ -120,6 +122,12 @@ public class MultiLocationSongPlayer extends AbstractSongPlayer {
                         1L,
                         5L
                 );
+    }
+
+    @Override
+    protected void updateVolume() {
+        if (volume <= 1) radius = baseRadius;
+        else radius = baseRadius * volume;
     }
 
     public void stopSong() {

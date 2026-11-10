@@ -334,6 +334,8 @@ public abstract class AbstractSongPlayer {
         this.volume = volume;
     }
 
+    protected void updateVolume() {}
+
     public float getVolume() {
         return volume;
     }
