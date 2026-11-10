@@ -332,6 +332,8 @@ public abstract class AbstractSongPlayer {
 
     public void setVolume(float volume) {
         this.volume = volume;
+
+        updateVolume();
     }
 
     protected void updateVolume() {}
