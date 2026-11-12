@@ -33,11 +33,11 @@ public abstract class AbstractSongPlayer {
     private static final long MIN_REFILL_DELAY_NS = TimeUnit.MILLISECONDS.toNanos(10);
     private static final int MAX_NOTE_QUEUE = 2048; // Per PRE_QUEUE_NOTE_TIME
 
-    private ArrayList<PreciseNotes.PacketPreciseNote> songNotes;
     private ArrayList<TimedNoteGroup> noteGroups;
     private int nextGroupToQueue;
     private long songStartNs;
     private long playbackGeneration;
+    private boolean paused;
 
     private final Queue<ScheduledTask> queuedNoteTasks = new ConcurrentLinkedQueue<>();
     private final Queue<String> queue = Queues.newConcurrentLinkedQueue();
@@ -58,6 +58,34 @@ public abstract class AbstractSongPlayer {
         startSong(NoteblocksLive.getSongManager().getMusicSheet(name), name);
     }
 
+    public synchronized void pauseSong() {
+        if (paused || noteGroups == null) return;
+
+        paused = true;
+        playbackGeneration++;
+        cancelPlaybackTasks();
+    }
+
+    public synchronized void resumeSong() {
+        if (!paused) return;
+
+        paused = false;
+
+        if (nextGroupToQueue == noteGroups.size()) {
+            finishPlayback(playbackGeneration);
+            return;
+        }
+
+        songStartNs = System.nanoTime() - noteGroups.get(nextGroupToQueue).timeNs();
+
+        if (speed != playbackSpeed) updateGroups();
+        else queueLookahead(playbackGeneration);
+    }
+
+    public synchronized boolean isPaused() {
+        return paused;
+    }
+
     protected synchronized void stopPlaybackOnly() {
         playbackGeneration++;
         cancelScheduledTasks();
@@ -68,12 +96,12 @@ public abstract class AbstractSongPlayer {
         playbackGeneration++;
         cancelScheduledTasks();
 
-        songNotes = notes;
         song = notes.iterator();
         noteGroups = buildNoteGroups(notes);
         nextGroupToQueue = 0;
         songStartNs = System.nanoTime();
         playbackSpeed = speed;
+        paused = false;
 
         if (noteGroups.isEmpty()) {
             clearPlaybackState();
@@ -90,7 +118,9 @@ public abstract class AbstractSongPlayer {
 
             nowPlayingTask = Bukkit.getAsyncScheduler().runAtFixedRate(
                     NoteblocksLive.getInstance(),
-                    _ -> sendAudienceMessage(nowPlayingMessage),
+                    _ -> {
+                        if (!isPaused()) sendAudienceMessage(nowPlayingMessage);
+                    },
                     10,
                     1000,
                     TimeUnit.MILLISECONDS
@@ -99,7 +129,7 @@ public abstract class AbstractSongPlayer {
     }
 
     private synchronized void queueLookahead(long generation) {
-        if (generation != playbackGeneration || noteGroups == null) return;
+        if (generation != playbackGeneration || noteGroups == null || paused) return;
 
         long nowNs = System.nanoTime();
         long queueUntilNs = safeAdd(nowNs, PRE_QUEUE_NOTE_TIME);
@@ -161,13 +191,9 @@ public abstract class AbstractSongPlayer {
         queuedNoteTasks.add(task);
     }
 
-    private void playQueuedGroup(long generation, TimedNoteGroup group) {
-        boolean finalGroup;
-
-        synchronized (this) {
-            if (generation != playbackGeneration || noteGroups == null) return;
-            finalGroup = group.index() == noteGroups.size() - 1;
-        }
+    private synchronized void playQueuedGroup(long generation, TimedNoteGroup group) {
+        if (generation != playbackGeneration || noteGroups == null || paused) return;
+        boolean finalGroup = group.index() == noteGroups.size() - 1;
 
         for (PreciseNotes.PacketPreciseNote note : group.notes()) playPacketNote(note);
 
@@ -210,10 +236,10 @@ public abstract class AbstractSongPlayer {
 
     private void clearPlaybackState() {
         song = null;
-        songNotes = null;
         noteGroups = null;
         nextGroupToQueue = 0;
         songStartNs = 0L;
+        paused = false;
     }
 
     private ArrayList<TimedNoteGroup> buildNoteGroups(ArrayList<PreciseNotes.PacketPreciseNote> notes) {
@@ -256,7 +282,7 @@ public abstract class AbstractSongPlayer {
     }
 
     protected synchronized void updateGroups() {
-        if (noteGroups == null || noteGroups.isEmpty() || speed <= 0) return;
+        if (paused || noteGroups == null || noteGroups.isEmpty() || speed <= 0) return;
 
         long nowNs = System.nanoTime();
         long elapsedNs = Math.max(0L, nowNs - songStartNs);

@@ -85,7 +85,6 @@ Learn more about how the custom instrument implementation works in [INSTRUMENTS.
  - Add music fading / transitions
  - Add a now playing display option which only shows at the start of each song.
  - Add more in depth playlists
- - Add pause and unpause
  - Add a song player control to pitch a song up or down
    - Make speed controls change pitch?
  - Add song editing features

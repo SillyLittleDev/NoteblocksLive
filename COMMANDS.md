@@ -53,6 +53,13 @@ The song location will stay the same, and will get quieter as you get further aw
 ```
 The controls sub command allows you to control current song players. This is where you handle song queues, volume, looping, skipping, etc.
 
+### Pause and Resume
+```yml
+/songs controls pause [song player]
+/songs controls resume [song player]
+```
+Pause saves the song's place and keeps the current settings, resuming from that position, but skipping pending notes.<br>
+
 ### Loop
 ```yml
 /songs controls loop <song player> <loop count>
@@ -99,7 +106,7 @@ This allows you to control the speed at which songs play for a particular song p
 ```yml
 /songs controls info <song player>
 ```
-Gets the current control settings of a song player. Gives details like the current song playing, volume, speed, queue, and loops.
+Gets the current control settings of a song player. Gives details like the current song playing, paused status, volume, speed, queue, and loops.
 
 ## System
 This sub command is used to control plugin wide settings. For the most part, it is suggested to leave this alone. These settings are mainly for testing.<br>
