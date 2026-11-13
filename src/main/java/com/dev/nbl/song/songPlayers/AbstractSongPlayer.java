@@ -357,9 +357,13 @@ public abstract class AbstractSongPlayer {
     }
 
     public void setVolume(float volume) {
+        setVolume(volume, false);
+    }
+
+    public void setVolume(float volume, boolean updateRange) {
         this.volume = volume;
 
-        updateVolume();
+        if (updateRange) updateVolume();
     }
 
     protected void updateVolume() {}

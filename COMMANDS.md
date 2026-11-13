@@ -90,10 +90,13 @@ For individual players, use the players username, otherwise, use the internal id
 
 ### Volume
 ```yml
-/songs controls volume <song player> <volume>
+/songs controls volume <song player> <volume> <update range>
 ```
 This allows you to set the volume for a song player. Numbers from 1 to 100 will convert as percentages. Numbers from 0 to 1 will scale as well. As such, using 0.5 and 50 will both set the volume to 50%.<br>
-For individual players, use the players username, otherwise, use the internal identifier you set when creating the song player.
+For individual players, use the players username, otherwise, use the internal identifier you set when creating the song player.<br>
+The update range variable is optional. If true, volumes over 100% will increase the range, allow players further away to hear it.<br>
+Minecraft cannot play volumes above 100%, but when a volume is set above 100%, it increases the range it can be heard from.<br>
+For obvious reasons, this only works for location based song players.
 
 ### Speed
 ```yml

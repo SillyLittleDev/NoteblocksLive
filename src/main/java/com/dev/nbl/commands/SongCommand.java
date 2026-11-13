@@ -719,6 +719,85 @@ public class SongCommand {
                                 .then(Commands.argument("target", StringArgumentType.string())
                                         .suggests((context, builder) -> suggestSongPlayer(builder, context.getSource()))
                                         .then(Commands.argument("volume", DoubleArgumentType.doubleArg())
+                                                .then(Commands.argument("update-volume", StringArgumentType.string())
+                                                        .suggests((context, builder) -> builder.suggest("true").suggest("false").buildFuture())
+                                                        .executes(context -> {
+                                                            String string = StringArgumentType.getString(context, "target");
+                                                            boolean update = StringArgumentType.getString(context, "update-volume").equalsIgnoreCase("true");
+                                                            String name;
+
+                                                            double volume = context.getArgument("volume", Double.class);
+                                                            float convertedVolume;
+
+                                                            if (volume > 1) convertedVolume = ((float) Math.max(volume, 0)) / 100;
+                                                            else convertedVolume = (float) volume;
+
+                                                            if (string.equalsIgnoreCase("all")) {
+                                                                AbstractSongPlayer songPlayer = musicManager.getOtherPlayer("All-Listening");
+
+                                                                if (blockToolCall(context.getSource().getSender(), null)) return Command.SINGLE_SUCCESS;
+
+                                                                if (songPlayer == null) {
+                                                                    context.getSource().getSender().sendMessage(
+                                                                            Component.text(
+                                                                                    "All song player Not Found!",
+                                                                                    NamedTextColor.RED
+                                                                            )
+                                                                    );
+                                                                    return Command.SINGLE_SUCCESS;
+                                                                }
+
+                                                                songPlayer.setVolume(convertedVolume, update);
+
+                                                                name = "All";
+                                                            }
+
+                                                            else if (musicManager.getOtherPlayers().containsKey(string)) {
+                                                                AbstractSongPlayer songPlayer = musicManager.getOtherPlayers().get(string);
+
+                                                                if (blockToolCall(context.getSource().getSender(), songPlayer)) return Command.SINGLE_SUCCESS;
+
+                                                                songPlayer.setVolume(convertedVolume, update);
+
+                                                                name = string;
+                                                            }
+
+                                                            else {
+                                                                Player target = Bukkit.getPlayer(string);
+
+                                                                if (target == null) {
+                                                                    context.getSource().getSender().sendMessage(
+                                                                            Component.text(
+                                                                                    "Player Not Found!",
+                                                                                    NamedTextColor.RED
+                                                                            )
+                                                                    );
+
+                                                                    return Command.SINGLE_SUCCESS;
+                                                                }
+
+                                                                IndividualSongPlayer songPlayer = musicManager.getSongPlayer(target);
+
+                                                                if (blockToolCall(context.getSource().getSender(), songPlayer)) return Command.SINGLE_SUCCESS;
+
+                                                                songPlayer.setVolume(convertedVolume, update);
+
+                                                                name = target.getName();
+                                                            }
+
+                                                            String volumeString = String.format("%.1f%%", convertedVolume * 100);
+
+                                                            context.getSource().getSender().sendMessage(
+                                                                    Component.text("Volume for song player ", NamedTextColor.WHITE)
+                                                                            .append(Component.text(name, NamedTextColor.GREEN))
+                                                                            .append(Component.text(" set to ", NamedTextColor.WHITE))
+                                                                            .append(Component.text(volumeString, NamedTextColor.GREEN))
+                                                                            .append(Component.text(" and updated range.", NamedTextColor.WHITE))
+                                                            );
+
+                                                            return Command.SINGLE_SUCCESS;
+                                                        })
+                                                )
                                                 .executes(context -> {
                                                     String string = StringArgumentType.getString(context, "target");
                                                     String name;
